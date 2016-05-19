@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FoodEqC</string>
+    <string name="new_composedItem_name">Item name</string>
+    <string name="new_composedItem_add_ingredient">Choose an Ingredient</string>
+    <string name="set_proportion_title">Set ingredient proportion</string>
+    <string name="delete_ingredient">Delete</string>
+    <string name="confirm_proportion">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="addIngredient">Add</string>
+    <string name="create_item">create</string>
+
 </resources>

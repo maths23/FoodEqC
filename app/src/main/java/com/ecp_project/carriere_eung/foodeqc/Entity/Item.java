@@ -14,7 +14,7 @@ public class Item {
     private static int idKey =0;
     private String name;
 
-    private int co2Equivalent;
+    private double co2Equivalent;
 
     private ItemType type;
 
@@ -41,11 +41,11 @@ public class Item {
         this.name = name;
     }
 
-    public int getCo2Equivalent() {
+    public double getCo2Equivalent() {
         return co2Equivalent;
     }
 
-    public void setCo2Equivalent(int co2Equivalent) {
+    public void setCo2Equivalent(double co2Equivalent) {
         this.co2Equivalent = co2Equivalent;
     }
 
