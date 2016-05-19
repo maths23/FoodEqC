@@ -22,4 +22,8 @@ public class Item {
         this.type = type;
 
     }
+
+    public int getId() {
+        return id;
+    }
 }
