@@ -22,4 +22,8 @@ public class Item {
         this.type = type;
         this.ingredients = ingredients;
     }
+
+    public String getName() {
+        return name;
+    }
 }
