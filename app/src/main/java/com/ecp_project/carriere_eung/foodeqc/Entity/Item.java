@@ -1,6 +1,5 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
-import java.util.ArrayList;
 
 /**
  * Created by Matthieu on 19/05/2016.
