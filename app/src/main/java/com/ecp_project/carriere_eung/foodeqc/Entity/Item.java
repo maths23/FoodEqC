@@ -12,15 +12,15 @@ public class Item {
     private String name;
     private int co2Equivalent;
     private ItemType type;
-    private ArrayList<Ingredient> ingredients;
 
-    public Item(String name, int co2Equivalent, ItemType type, ArrayList<Ingredient> ingredients) {
+
+    public Item(String name, int co2Equivalent, ItemType type) {
         this.id = idKey;
         idKey += 1;
         this.name = name;
         this.co2Equivalent = co2Equivalent;
         this.type = type;
-        this.ingredients = ingredients;
+
     }
 
     public String getName() {
