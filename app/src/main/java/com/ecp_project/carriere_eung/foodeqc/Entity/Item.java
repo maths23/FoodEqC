@@ -1,4 +1,4 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Entity;
 
 import java.util.ArrayList;
 
