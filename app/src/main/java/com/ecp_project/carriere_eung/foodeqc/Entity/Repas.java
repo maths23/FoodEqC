@@ -1,5 +1,9 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
+import android.widget.Toast;
+
+import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -18,6 +22,15 @@ public class Repas {
     private ArrayList<ItemRepas> elements;
 
     private int co2Equivalent;
+
+
+    public Repas(String nom, String description, Date date) {
+        this.nom = nom;
+        this.description = description;
+        this.date = date;
+        this.elements = new ArrayList<>();
+        this.co2Equivalent = 0;
+    }
 
     public String getNom() {
         return nom;
@@ -53,13 +66,22 @@ public class Repas {
 
     public void addElement(ItemRepas element) {
         this.elements.add(element);
+        this.co2Equivalent += element.getItem().getCo2Equivalent();
+    }
+
+    public void removeElement(ItemRepas element) throws ItemNotFoundException {
+        if (this.elements.contains(element)) {
+            this.elements.remove(element);
+            this.co2Equivalent -= element.getItem().getCo2Equivalent();
+        }
+        else {
+            throw new ItemNotFoundException();
+        }
     }
 
     public int getCo2Equivalent() {
         return co2Equivalent;
     }
 
-    public void setCo2Equivalent(int co2Equivalent) {
-        this.co2Equivalent = co2Equivalent;
-    }
+
 }
