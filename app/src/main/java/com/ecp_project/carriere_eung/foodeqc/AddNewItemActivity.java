@@ -6,18 +6,54 @@ import android.preference.DialogPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Matthieu on 19/05/2016.
+ * allows the user to create a new item, made from different ingredients.
+ * Auto-completion from the known items list will be featured
  */
 public class AddNewItemActivity extends AppCompatActivity {
 
+    EditText itemNameText;
+    EditText ingredientText;
     ListView lvIngredients;
+    Button addIngredient;
+    Button createItem;
+    ArrayList<HashMap<String,String>> ingredientList = new ArrayList<HashMap<String,String>>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_item);
+
+        itemNameText = (EditText)findViewById(R.id.editTextAddItemName);
+        ingredientText = (EditText)findViewById(R.id.editTextAddIngredient);
+        addIngredient = (Button)findViewById(R.id.buttonAddIngredient);
+        createItem = (Button)findViewById(R.id.buttonCreateItem);
+
+        addIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ingredientName = ingredientText.getText().toString();
+                HashMap<String,String> ingredient = new HashMap<String, String>();
+                ingredient.put("ingredient",ingredientName);
+                ingredient.put("proportion","0");
+                ingredientList.add(ingredient);
+            }
+        });
+
+
+        ListAdapter adapter = new SimpleAdapter(
+                AddNewItemActivity.this,ingredientList,R.layout.display_ingredient,new String[]{"ingredient","proportion"},
+                new int[]{R.id.textViewIngredientNameDisplay,R.id.textViewIngredientProportionDisplay});
+        lvIngredients.setAdapter(adapter);
 
         lvIngredients = (ListView)findViewById(R.id.listViewIngredients);
         lvIngredients.setOnClickListener(new View.OnClickListener() {
