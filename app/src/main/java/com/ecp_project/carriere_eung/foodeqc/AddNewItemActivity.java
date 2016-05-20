@@ -6,6 +6,7 @@ import android.preference.DialogPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -33,32 +34,33 @@ public class AddNewItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_item);
 
-        itemNameText = (EditText)findViewById(R.id.editTextAddItemName);
-        ingredientText = (EditText)findViewById(R.id.editTextAddIngredient);
-        addIngredient = (Button)findViewById(R.id.buttonAddIngredient);
-        createItem = (Button)findViewById(R.id.buttonCreateItem);
+        itemNameText = (EditText) findViewById(R.id.editTextAddItemName);
+        ingredientText = (EditText) findViewById(R.id.editTextAddIngredient);
+        addIngredient = (Button) findViewById(R.id.buttonAddIngredient);
+        createItem = (Button) findViewById(R.id.buttonCreateItem);
+        lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
 
         addIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String ingredientName = ingredientText.getText().toString();
-                HashMap<String,String> ingredient = new HashMap<String, String>();
-                ingredient.put("ingredient",ingredientName);
-                ingredient.put("proportion","0");
+                HashMap<String, String> ingredient = new HashMap<String, String>();
+                ingredient.put("ingredient", ingredientName);
+                ingredient.put("proportion", "0");
                 ingredientList.add(ingredient);
             }
         });
 
 
         ListAdapter adapter = new SimpleAdapter(
-                AddNewItemActivity.this,ingredientList,R.layout.display_ingredient,new String[]{"ingredient","proportion"},
-                new int[]{R.id.textViewIngredientNameDisplay,R.id.textViewIngredientProportionDisplay});
+                AddNewItemActivity.this, ingredientList, R.layout.display_ingredient, new String[]{"ingredient", "proportion"},
+                new int[]{R.id.textViewIngredientNameDisplay, R.id.textViewIngredientProportionDisplay});
         lvIngredients.setAdapter(adapter);
 
-        lvIngredients = (ListView)findViewById(R.id.listViewIngredients);
-        lvIngredients.setOnClickListener(new View.OnClickListener() {
+        lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
+        lvIngredients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getApplication());
                 builder.setTitle(R.string.set_proportion_title);
                 builder.setView(R.layout.set_proportion);
@@ -80,8 +82,11 @@ public class AddNewItemActivity extends AppCompatActivity {
 
                     }
                 });
+
+
             }
+
+            ;
         });
     }
-
 }
