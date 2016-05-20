@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Matthieu on 19/05/2016.
+ *
+ * Classe représentant un Item composé, c'est à dire un item
+ * qui ne figure pas dans la liste de base et qui a été ajouté par l'Utilisateur
  */
 public class ComposedItem extends Item{
 
@@ -50,7 +53,8 @@ public class ComposedItem extends Item{
     //used to compute CO2equivalent of a composedItem :
     //equals to the sum of its ingredients * this malus
     public double getMalusFactor(){
-        double returnValue=0;
+        // On met la valeur à 1 par défault
+        double returnValue=1;
         switch (this.cost){
             case low:
                 returnValue = 1.1;
