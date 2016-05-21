@@ -48,12 +48,12 @@
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\support_simple_spinner_dropdown_item.xml"
     },
     {
-        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_button_bar_material.xml",
-        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_alert_dialog_button_bar_material.xml"
-    },
-    {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_screen_simple.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_screen_simple.xml"
+    },
+    {
+        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_button_bar_material.xml",
+        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_alert_dialog_button_bar_material.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_search_dropdown_item_icons_2line.xml",
@@ -88,12 +88,20 @@
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\src\\main\\res\\layout\\activity_main.xml"
     },
     {
+        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\set_proportion.xml",
+        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\src\\main\\res\\layout\\set_proportion.xml"
+    },
+    {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_action_mode_bar.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_action_mode_bar.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\select_dialog_singlechoice_material.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\select_dialog_singlechoice_material.xml"
+    },
+    {
+        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\display_ingredient.xml",
+        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\src\\main\\res\\layout\\display_ingredient.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_list_menu_item_checkbox.xml",
@@ -112,16 +120,16 @@
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_expanded_menu_layout.xml"
     },
     {
+        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_big_media.xml",
+        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\notification_template_big_media.xml"
+    },
+    {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_screen_content_include.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_screen_content_include.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_dialog_title_material.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_dialog_title_material.xml"
-    },
-    {
-        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_big_media.xml",
-        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\notification_template_big_media.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_part_chronometer.xml",
@@ -134,6 +142,10 @@
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_activity_chooser_view.xml",
         "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\layout\\abc_activity_chooser_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\add_new_item.xml",
+        "source": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\src\\main\\res\\layout\\add_new_item.xml"
     },
     {
         "merged": "C:\\Users\\Matthieu\\AndroidStudioProjects\\FoodEqC\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_media.xml",

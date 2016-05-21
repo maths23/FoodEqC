@@ -213,7 +213,15 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
+    <string name="addIngredient">Add</string>
     <string name="app_name">FoodEqC</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm_proportion">Confirm</string>
+    <string name="create_item">create</string>
+    <string name="delete_ingredient">Delete</string>
+    <string name="new_composedItem_add_ingredient">Choose an Ingredient</string>
+    <string name="new_composedItem_name">Item name</string>
+    <string name="set_proportion_title">Set ingredient proportion</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>

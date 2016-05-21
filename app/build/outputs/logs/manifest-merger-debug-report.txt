@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:2:1-20:12
+ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:2:1-21:12
 	package
 		ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:3:5-52
 		INJECTED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml
@@ -14,7 +14,7 @@ ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidM
 		INJECTED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml
 application
-ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:5:5-18:19
+ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:5:5-19:19
 MERGED from [com.android.support:appcompat-v7:23.2.1] C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.1\AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-v4:23.2.1] C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:animated-vector-drawable:23.2.1] C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.1\AndroidManifest.xml:7:5-20
@@ -46,6 +46,10 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:15:17-77
 	android:name
 		ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:15:27-74
+activity#com.ecp_project.carriere_eung.foodeqc.AddNewItemActivity
+ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:18:9-65
+	android:name
+		ADDED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml:18:19-53
 uses-sdk
 INJECTED from C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:23.2.1] C:\Users\Matthieu\AndroidStudioProjects\FoodEqC\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.1\AndroidManifest.xml:21:5-23:78

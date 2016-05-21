@@ -29,6 +29,7 @@ public class AddNewItemActivity extends AppCompatActivity {
     Button addIngredient;
     Button createItem;
     ArrayList<HashMap<String,String>> ingredientList = new ArrayList<HashMap<String,String>>();
+    ListAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +41,11 @@ public class AddNewItemActivity extends AppCompatActivity {
         createItem = (Button) findViewById(R.id.buttonCreateItem);
         lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
 
+        adapter = new SimpleAdapter(
+                AddNewItemActivity.this, ingredientList, R.layout.display_ingredient, new String[]{"ingredient", "proportion"},
+                new int[]{R.id.textViewIngredientNameDisplay, R.id.textViewIngredientProportionDisplay});
+        lvIngredients.setAdapter(adapter);
+
         addIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,14 +54,11 @@ public class AddNewItemActivity extends AppCompatActivity {
                 ingredient.put("ingredient", ingredientName);
                 ingredient.put("proportion", "0");
                 ingredientList.add(ingredient);
+                lvIngredients.setAdapter(adapter);
             }
         });
 
 
-        ListAdapter adapter = new SimpleAdapter(
-                AddNewItemActivity.this, ingredientList, R.layout.display_ingredient, new String[]{"ingredient", "proportion"},
-                new int[]{R.id.textViewIngredientNameDisplay, R.id.textViewIngredientProportionDisplay});
-        lvIngredients.setAdapter(adapter);
 
         lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
         lvIngredients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
