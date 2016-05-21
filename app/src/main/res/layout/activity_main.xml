@@ -9,8 +9,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ecp_project.carriere_eung.foodeqc.MainActivity">
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="@string/create_item"
+        android:id="@+id/buttonCreateItemMain" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonCreateItemMain"
+        android:text="@string/create_repas_main"
+        android:id="@+id/buttonCreateRepasMain" />
 </RelativeLayout>

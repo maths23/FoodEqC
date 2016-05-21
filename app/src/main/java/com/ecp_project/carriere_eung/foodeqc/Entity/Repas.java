@@ -17,6 +17,7 @@ public class Repas {
     private String nom;
     private String description;
     private Date date;
+    private RepasType repasType;
 
 
     private ArrayList<ItemRepas> elements;
@@ -24,10 +25,12 @@ public class Repas {
     private int co2Equivalent;
 
 
-    public Repas(String nom, String description, Date date) {
+    public Repas(String nom, String description, Date date, RepasType repasType) {
         this.nom = nom;
         this.description = description;
         this.date = date;
+        this.repasType = repasType;
+
         this.elements = new ArrayList<>();
         this.co2Equivalent = 0;
     }
@@ -83,5 +86,11 @@ public class Repas {
         return co2Equivalent;
     }
 
+    public RepasType getRepasType() {
+        return repasType;
+    }
 
+    public void setRepasType(RepasType repasType) {
+        this.repasType = repasType;
+    }
 }

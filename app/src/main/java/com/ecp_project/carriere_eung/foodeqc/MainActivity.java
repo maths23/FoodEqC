@@ -8,6 +8,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     Button createItem;
+    Button createRepas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +21,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),AddNewItemActivity.class);
                 startActivity(intent);
 
+            }
+        });
+        createRepas = (Button)findViewById(R.id.buttonCreateRepasMain);
+        createRepas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AddNewRepasTypeActivity.class);
+                startActivity(intent);
             }
         });
     }
