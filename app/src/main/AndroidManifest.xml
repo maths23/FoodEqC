@@ -16,6 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddNewItemActivity"></activity>
+        <activity android:name=".AddNewRepasActivity"></activity>
+        <activity android:name=".AddNewRepasTypeActivity"></activity>
     </application>
 
 </manifest>
