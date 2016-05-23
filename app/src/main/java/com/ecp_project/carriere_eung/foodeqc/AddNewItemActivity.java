@@ -1,5 +1,6 @@
 package com.ecp_project.carriere_eung.foodeqc;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.DialogPreference;
@@ -85,11 +86,13 @@ public class AddNewItemActivity extends AppCompatActivity {
 
                     }
                 });
-
+                builder.create();
 
             }
 
             ;
         });
+
+
     }
 }
