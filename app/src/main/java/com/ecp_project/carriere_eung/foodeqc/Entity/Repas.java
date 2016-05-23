@@ -1,11 +1,9 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
-import android.widget.Toast;
-
 import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by eung on 19/05/16.
@@ -14,20 +12,16 @@ import java.util.Date;
  */
 public class Repas {
 
-    private String nom;
-    private String description;
-    private Date date;
+    private GregorianCalendar date;
     private RepasType repasType;
 
 
     private ArrayList<ItemRepas> elements;
 
-    private int co2Equivalent;
+    private double co2Equivalent;
 
 
-    public Repas(String nom, String description, Date date, RepasType repasType) {
-        this.nom = nom;
-        this.description = description;
+    public Repas(GregorianCalendar date, RepasType repasType) {
         this.date = date;
         this.repasType = repasType;
 
@@ -35,27 +29,11 @@ public class Repas {
         this.co2Equivalent = 0;
     }
 
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(GregorianCalendar date) {
         this.date = date;
     }
 
@@ -69,20 +47,20 @@ public class Repas {
 
     public void addElement(ItemRepas element) {
         this.elements.add(element);
-        this.co2Equivalent += element.getItem().getCo2Equivalent();
+        this.co2Equivalent += element.getCo2Equivalent();
     }
 
     public void removeElement(ItemRepas element) throws ItemNotFoundException {
         if (this.elements.contains(element)) {
             this.elements.remove(element);
-            this.co2Equivalent -= element.getItem().getCo2Equivalent();
+            this.co2Equivalent -= element.getCo2Equivalent();
         }
         else {
             throw new ItemNotFoundException();
         }
     }
 
-    public int getCo2Equivalent() {
+    public double getCo2Equivalent() {
         return co2Equivalent;
     }
 

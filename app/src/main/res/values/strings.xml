@@ -15,5 +15,6 @@
     <string name="lunch">Lunch</string>
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
+    <string name="new_repas_date">Date</string>
 
 </resources>

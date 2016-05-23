@@ -9,7 +9,7 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
 public class ItemRepas {
 
     private Item item;
-    private int poids;
+    private double poids;
 
     public ItemRepas(Item item, int poids) {
         this.item = item;
@@ -24,11 +24,15 @@ public class ItemRepas {
         this.item = item;
     }
 
-    public int getPoids() {
+    public double getPoids() {
         return poids;
     }
 
     public void setPoids(int poids) {
         this.poids = poids;
+    }
+
+    public double getCo2Equivalent() {
+        return item.getCo2Equivalent() * poids;
     }
 }
