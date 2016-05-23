@@ -16,5 +16,6 @@
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
     <string name="new_repas_date">Date</string>
+    <string name="ingredient_alreay_exist">This ingredient is already on the list !</string>
 
 </resources>

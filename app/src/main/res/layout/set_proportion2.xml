@@ -3,13 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <com.ecp_project.carriere_eung.foodeqc.Widget.CustomNumberPicker
-        android:layout_width="wrap_content"
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/nPicker"
-        max="50"
-        min="0">
-
-    </com.ecp_project.carriere_eung.foodeqc.Widget.CustomNumberPicker>
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editTextProportionSetter"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

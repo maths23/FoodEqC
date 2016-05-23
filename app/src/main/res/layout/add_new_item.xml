@@ -15,18 +15,25 @@
         android:layout_weight="0.15">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView"
             android:text="@string/new_composedItem_name"
-            android:paddingRight="100dp" />
+            android:paddingRight="0dp"
+            android:layout_weight="0.3" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/editTextAddItemName"
-            android:paddingLeft="20dp"
-            android:paddingRight="50dp" />
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:layout_weight="0.5" />
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="20px"
+            android:layout_weight="0.2" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,27 +43,26 @@
         android:layout_weight="0.15">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/new_composedItem_add_ingredient"
             android:id="@+id/textView2"
-            android:paddingRight="37dp" />
+            android:paddingRight="0dp"
+            android:layout_weight="0.3" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/editTextAddIngredient"
-            android:paddingRight="70dp" />
-
-        <Space
-            android:layout_width="50px"
-            android:layout_height="20px" />
+            android:paddingRight="0dp"
+            android:layout_weight="0.2" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/addIngredient"
-            android:id="@+id/buttonAddIngredient" />
+            android:id="@+id/buttonAddIngredient"
+            android:layout_weight="0.2" />
 
     </LinearLayout>
 
