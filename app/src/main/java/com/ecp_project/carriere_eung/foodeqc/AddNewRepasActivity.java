@@ -1,22 +1,17 @@
 package com.ecp_project.carriere_eung.foodeqc;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
@@ -27,8 +22,6 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -54,8 +47,6 @@ public class AddNewRepasActivity extends AppCompatActivity {
     Button btnSave;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +70,43 @@ public class AddNewRepasActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 temporaryStorageItemRepas = repas.getElements().get(position);
-                showDialog(DIALOG_ALERT_DELETE);
+                createAlertDialogDeleteItem();
                 return true;
+            }
+        });
+
+        listViewRepasItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                temporaryStorageItemRepas = repas.getElements().get(position);
+                AlertDialog.Builder alert = new AlertDialog.Builder(AddNewRepasActivity.this);
+                alert.setTitle(R.string.set_weight_title); //Set Alert dialog title here
+
+                // Set an EditText view to get user input
+                final EditText input = new EditText(AddNewRepasActivity.this);
+                input.setText(String.valueOf(temporaryStorageItemRepas.getPoids()));
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                alert.setView(input);
+
+                alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //You will get as string input data in this variable.
+                        // here we convert the input to a string and show in a toast.
+                        int weight = Integer.parseInt(input.getEditableText().toString());
+                        temporaryStorageItemRepas.setPoids(weight);
+                        listViewRepasItem.setAdapter(adapter);
+                        Toast.makeText(AddNewRepasActivity.this,temporaryStorageItemRepas.getItem().getName()+getString(R.string.item_repas_weigth_set)+weight,Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alertDialog = alert.create();
+                alertDialog.show();
             }
         });
 
@@ -153,17 +179,20 @@ public class AddNewRepasActivity extends AppCompatActivity {
     }
 
 
+    public void createAlertDialogDeleteItem() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.alertDialogDeleteItemRepas);
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.delete_item_repas, new OkOnClickListener());
+        builder.setNegativeButton(R.string.cancel_delete_item_repas, new CancelOnClickListener());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DIALOG_ALERT_DELETE:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.alertDialogDeleteItemRepas);
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.delete_item_repas, new OkOnClickListener());
-                builder.setNegativeButton(R.string.cancel_delete_item_repas, new CancelOnClickListener());
-                AlertDialog dialog = builder.create();
-                dialog.show();
+
         }
         return super.onCreateDialog(id);
     }
@@ -171,6 +200,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
     private final class CancelOnClickListener implements
             DialogInterface.OnClickListener {
         public void onClick(DialogInterface dialog, int which) {
+            dialog.cancel();
         }
     }
 

@@ -47,7 +47,7 @@ public class ItemRepasAdapter extends ArrayAdapter<ItemRepas> {
         ItemRepas itemRepas = getItem(position);
         //il ne reste plus qu'à remplir notre vue
         viewHolder.textViewItemName.setText(itemRepas.getItem().getName());
-        viewHolder.textViewItemWeight.setText(String.valueOf(itemRepas.getPoids())+" g");
+        viewHolder.textViewItemWeight.setText(Integer.toString(itemRepas.getPoids())+" g");
 
         return convertView;
     }

@@ -27,5 +27,7 @@
     <string name="cancel_delete_item_repas">Cancel</string>
     <string name="item_not_found_error">Item not found !</string>
     <string name="item_repas_deleted">: item deleted !</string>
+    <string name="set_weight_title">Set item weight</string>
+    <string name="item_repas_weigth_set">\'s weigth set to</string>
 
 </resources>
