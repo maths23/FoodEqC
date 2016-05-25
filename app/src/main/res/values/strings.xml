@@ -21,6 +21,11 @@
     <string name="addRepasItemWeight">Weight (in gram) :</string>
     <string name="repasItem">Item :</string>
     <string name="save">Save</string>
-    <string name="repasItemList">Items selected</string>
+    <string name="repasItemList">Items in you meal :</string>
+    <string name="alertDialogDeleteItemRepas">Do you really want to delete this item ?</string>
+    <string name="delete_item_repas">Delete</string>
+    <string name="cancel_delete_item_repas">Cancel</string>
+    <string name="item_not_found_error">Item not found !</string>
+    <string name="item_repas_deleted">: item deleted !</string>
 
 </resources>

@@ -1,11 +1,14 @@
 package com.ecp_project.carriere_eung.foodeqc;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,6 +17,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
@@ -21,6 +25,7 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
+import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,10 +36,13 @@ import java.util.GregorianCalendar;
  * Allow the user to had a meal.
  */
 public class AddNewRepasActivity extends AppCompatActivity {
-    RepasType repasType;
-
+    private static final int DIALOG_ALERT_DELETE = 100;
+    private ItemRepas temporaryStorageItemRepas;
 
     final GregorianCalendar c = new GregorianCalendar();
+    ItemRepasAdapter adapter;
+
+    RepasType repasType;
     Repas repas = new Repas(c,repasType);
 
     TextView tvCurrentDate;
@@ -44,6 +52,8 @@ public class AddNewRepasActivity extends AppCompatActivity {
     ListView listViewRepasItem;
     Button btnAddRepasItem;
     Button btnSave;
+
+
 
 
     @Override
@@ -62,11 +72,26 @@ public class AddNewRepasActivity extends AppCompatActivity {
         tvRepasType.setText(stringRepasType(repasType));
 
         listViewRepasItem = (ListView)findViewById(R.id.listViewRepasItem);
-        ItemRepasAdapter adapter = new ItemRepasAdapter(AddNewRepasActivity.this,repas.getElements());
+        initializeAdapter();
         listViewRepasItem.setAdapter(adapter);
 
+        listViewRepasItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                temporaryStorageItemRepas = repas.getElements().get(position);
+                showDialog(DIALOG_ALERT_DELETE);
+                return true;
+            }
+        });
 
 
+
+
+
+    }
+
+    public void initializeAdapter() {
+        adapter = new ItemRepasAdapter(AddNewRepasActivity.this,repas.getElements());
 
     }
 
@@ -128,4 +153,38 @@ public class AddNewRepasActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_ALERT_DELETE:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.alertDialogDeleteItemRepas);
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.delete_item_repas, new OkOnClickListener());
+                builder.setNegativeButton(R.string.cancel_delete_item_repas, new CancelOnClickListener());
+                AlertDialog dialog = builder.create();
+                dialog.show();
+        }
+        return super.onCreateDialog(id);
+    }
+
+    private final class CancelOnClickListener implements
+            DialogInterface.OnClickListener {
+        public void onClick(DialogInterface dialog, int which) {
+        }
+    }
+
+    private final class OkOnClickListener implements
+            DialogInterface.OnClickListener {
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                repas.removeElement(temporaryStorageItemRepas);
+                listViewRepasItem.setAdapter(adapter);
+                Toast.makeText(getApplication(), temporaryStorageItemRepas.getItem().getName()+getString(R.string.item_repas_deleted),Toast.LENGTH_LONG).show();
+            } catch (ItemNotFoundException e) {
+                Toast.makeText(getApplication(), getString(R.string.item_not_found_error),Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }
+
