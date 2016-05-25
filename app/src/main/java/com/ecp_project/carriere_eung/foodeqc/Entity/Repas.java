@@ -1,6 +1,7 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
 import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -71,4 +72,5 @@ public class Repas {
     public void setRepasType(RepasType repasType) {
         this.repasType = repasType;
     }
+
 }
