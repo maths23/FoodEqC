@@ -5,18 +5,20 @@
     android:gravity="center_horizontal">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Ingredient Name"
+        android:text="Item Name"
         android:id="@+id/textViewIngredientNameDisplay"
         android:paddingRight="35dp"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:layout_weight="0.5" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="0"
         android:id="@+id/textViewIngredientProportionDisplay"
         android:paddingRight="35dp"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:layout_weight="0.5" />
 </LinearLayout>

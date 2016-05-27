@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
+import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ import java.util.HashMap;
  */
 public class AddNewItemActivity extends AppCompatActivity implements  SetProportionDialog.SetProportionDialogListener {
 
-    DatabaseHandler db;
+    public DatabaseHandler db;
     EditText itemNameText;
     EditText ingredientText;
     ListView lvIngredients;
@@ -40,6 +42,9 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
     ListAdapter adapter;
     final String TAG_INGREDIENT = "ingredient";
     final String TAG_PROPORTION = "proportion";
+    public CustomAutoCompleteView myAutoComplete;
+    public ArrayAdapter<String> myAdapter;
+    public String[] item = new String[] {"Please search..."};
 
     //those two fields are used to store the name and the position of the item of the ListView
     //on which onItemClick is called
@@ -54,10 +59,14 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
 
         db =new DatabaseHandler(getApplication());
         itemNameText = (EditText) findViewById(R.id.editTextAddItemName);
-        ingredientText = (EditText) findViewById(R.id.editTextAddIngredient);
+        ingredientText = (EditText) findViewById(R.id.autocompleteAddIngredient);
         addIngredient = (Button) findViewById(R.id.buttonAddIngredient);
         createItem = (Button) findViewById(R.id.buttonCreateItem);
         lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
+        myAutoComplete = (CustomAutoCompleteView)findViewById(R.id.autocompleteAddIngredient);
+        myAutoComplete.addTextChangedListener(new CustomAutoCompleteTextChangedListener(this));
+        myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,item);
+        myAutoComplete.setAdapter(myAdapter);
 
         adapter = new SimpleAdapter(
                 AddNewItemActivity.this, ingredientList, R.layout.display_ingredient, new String[]{"ingredient", "proportion"},
@@ -70,7 +79,10 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
                 String ingredientName = ingredientText.getText().toString();
                 if (AddNewItemAuxiliary.listContainsMap(ingredientList,ingredientName)){
                     Toast.makeText(getApplication(),R.string.ingredient_alreay_on_the_list,Toast.LENGTH_LONG).show();
+                } else if (!db.checksIfNameExist(ingredientName)) {
+                    Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
                 } else{
+
                     HashMap<String, String> ingredient = new HashMap<String, String>();
                     ingredient.put(TAG_INGREDIENT, ingredientName);
                     ingredient.put(TAG_PROPORTION, "0");
@@ -106,7 +118,9 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
             public void onClick(View v) {
                 boolean test = db.addItem(new Item(temporayStorageIngredientName,50.2,ItemType.local));
                 Log.e("Create",""+test);
-                Toast.makeText(getApplication(),(new Item(temporayStorageIngredientName,50.2,ItemType.local).toString()),Toast.LENGTH_LONG).show();
+                if(test) {
+                    Toast.makeText(getApplication(), (new Item(temporayStorageIngredientName, 50.2, ItemType.local).toString()), Toast.LENGTH_LONG).show();
+                }
             }
         });
 

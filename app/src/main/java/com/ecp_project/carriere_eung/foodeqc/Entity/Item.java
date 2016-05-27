@@ -1,17 +1,20 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
 
+import com.ecp_project.carriere_eung.foodeqc.R;
+
 /**
  * Created by Matthieu on 19/05/2016.
  *
  * Classe générale représentant un produit.
+ * L'ID est gérée par la database. Pas d'autoincrémentation à partir d'une clé dans cette classe.
  *
  */
 public class Item {
 
 
-    private int id;
-    private static int idKey =0;
+    private int id =-1;
+    //private static int idKey =0;
     private String name;
 
     private double co2Equivalent;
@@ -19,13 +22,19 @@ public class Item {
     private ItemType type;
 
 
-    public Item(String name, double co2Equivalent, ItemType type) {
-        this.id = idKey;
-        idKey += 1;
+    public Item(int id,String name, double co2Equivalent, ItemType type) {
+
+        this.id = id;
         this.name = name;
         this.co2Equivalent = co2Equivalent;
         this.type = type;
 
+    }
+
+    public Item(String name, double co2Equivalent, ItemType type) {
+        this.name = name;
+        this.co2Equivalent = co2Equivalent;
+        this.type = type;
     }
 
     public int getId() {
@@ -55,6 +64,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return name + "has an equivalent of " + co2Equivalent + " gCO2/100g and is " + type.toString();
+        return name + R.string.itemToString1 + co2Equivalent + R.string.itemToString2 + type.toString();
     }
 }

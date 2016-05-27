@@ -50,12 +50,13 @@
             android:paddingRight="0dp"
             android:layout_weight="0.3" />
 
-        <EditText
+
+        <com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView
+            android:id="@+id/autocompleteAddIngredient"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editTextAddIngredient"
-            android:paddingRight="0dp"
-            android:layout_weight="0.2" />
+            android:layout_weight="0.2"
+            android:completionThreshold="1" />
 
         <Button
             android:layout_width="0dp"

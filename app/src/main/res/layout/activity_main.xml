@@ -33,4 +33,13 @@
         android:text="@string/create_repas_main"
         android:id="@+id/buttonCreateRepasMain" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="See items"
+        android:id="@+id/buttonSeeItems"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_toRightOf="@+id/buttonCreateItemMain"
+        android:layout_toEndOf="@+id/buttonCreateItemMain" />
+
 </RelativeLayout>
