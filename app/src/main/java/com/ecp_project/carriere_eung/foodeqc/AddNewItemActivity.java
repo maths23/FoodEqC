@@ -1,26 +1,22 @@
 package com.ecp_project.carriere_eung.foodeqc;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.DialogPreference;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
-import com.ecp_project.carriere_eung.foodeqc.Widget.CustomNumberPicker;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
+import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +30,7 @@ import java.util.HashMap;
  */
 public class AddNewItemActivity extends AppCompatActivity implements  SetProportionDialog.SetProportionDialogListener {
 
+    DatabaseHandler db;
     EditText itemNameText;
     EditText ingredientText;
     ListView lvIngredients;
@@ -44,7 +41,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
     final String TAG_INGREDIENT = "ingredient";
     final String TAG_PROPORTION = "proportion";
 
-    //those two fiels are used to store the name and the position of the item of the ListView
+    //those two fields are used to store the name and the position of the item of the ListView
     //on which onItemClick is called
     String temporayStorageIngredientName;
     int temporaryStoragePosition;
@@ -55,6 +52,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_item);
 
+        db =new DatabaseHandler(getApplication());
         itemNameText = (EditText) findViewById(R.id.editTextAddItemName);
         ingredientText = (EditText) findViewById(R.id.editTextAddIngredient);
         addIngredient = (Button) findViewById(R.id.buttonAddIngredient);
@@ -71,7 +69,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
             public void onClick(View v) {
                 String ingredientName = ingredientText.getText().toString();
                 if (AddNewItemAuxiliary.listContainsMap(ingredientList,ingredientName)){
-                    Toast.makeText(getApplication(),R.string.ingredient_alreay_exist,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplication(),R.string.ingredient_alreay_on_the_list,Toast.LENGTH_LONG).show();
                 } else{
                     HashMap<String, String> ingredient = new HashMap<String, String>();
                     ingredient.put(TAG_INGREDIENT, ingredientName);
@@ -101,6 +99,15 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
             }
 
             ;
+        });
+
+        createItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean test = db.addItem(new Item(temporayStorageIngredientName,50.2,ItemType.local));
+                Log.e("Create",""+test);
+                Toast.makeText(getApplication(),(new Item(temporayStorageIngredientName,50.2,ItemType.local).toString()),Toast.LENGTH_LONG).show();
+            }
         });
 
 

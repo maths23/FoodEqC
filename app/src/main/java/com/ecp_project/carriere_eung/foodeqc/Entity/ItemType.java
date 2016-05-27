@@ -10,5 +10,22 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
  *
  */
 public enum ItemType {
-    base,local,imported
+    base,local,imported;
+
+    @Override
+    public String toString() {
+        String returnValue = "";
+        switch (this){
+            case base:
+                returnValue = "base";
+                break;
+            case local:
+                returnValue = "local";
+                break;
+            case imported:
+                returnValue = "imported";
+                break;
+        }
+        return returnValue;
+    }
 }

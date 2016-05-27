@@ -19,7 +19,7 @@ public class Item {
     private ItemType type;
 
 
-    public Item(String name, int co2Equivalent, ItemType type) {
+    public Item(String name, double co2Equivalent, ItemType type) {
         this.id = idKey;
         idKey += 1;
         this.name = name;
@@ -53,4 +53,8 @@ public class Item {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return name + "has an equivalent of " + co2Equivalent + " gCO2/100g and is " + type.toString();
+    }
 }

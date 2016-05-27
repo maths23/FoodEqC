@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".AddNewRepasActivity"></activity>
         <activity android:name=".AddNewRepasTypeActivity"></activity>
+        <activity android:name=".DisplayExistingItemActivity"></activity>
     </application>
 
 </manifest>

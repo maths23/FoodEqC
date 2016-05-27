@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 
 public class MainActivity extends AppCompatActivity {
     Button createItem;
@@ -14,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         createItem = (Button)findViewById(R.id.buttonCreateItemMain);
         createItem.setOnClickListener(new View.OnClickListener() {
             @Override

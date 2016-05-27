@@ -16,6 +16,10 @@
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
     <string name="new_repas_date">Date</string>
-    <string name="ingredient_alreay_exist">This ingredient is already on the list !</string>
+    <string name="ingredient_alreay_on_the_list">This ingredient is already on the list !</string>
+    <string name="existing_items_show">List of existing items</string>
+    <string name="itemToString1"> has an equivalent of </string>
+    <string name="itemToString2"> gCO2/100g and is </string>
+    <string name="item_alreaydy_on_db">This item is already on the database !</string>
 
 </resources>

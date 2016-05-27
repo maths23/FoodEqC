@@ -9,12 +9,14 @@
         android:layout_height="wrap_content"
         android:text="Ingredient Name"
         android:id="@+id/textViewIngredientNameDisplay"
-        android:paddingRight="35dp" />
+        android:paddingRight="35dp"
+        android:textSize="15dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
         android:id="@+id/textViewIngredientProportionDisplay"
-        android:paddingRight="35dp" />
+        android:paddingRight="35dp"
+        android:textSize="15dp" />
 </LinearLayout>
