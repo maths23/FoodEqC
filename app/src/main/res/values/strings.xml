@@ -15,11 +15,25 @@
     <string name="lunch">Lunch</string>
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
-    <string name="new_repas_date">Date</string>
     <string name="ingredient_alreay_on_the_list">This ingredient is already on the list !</string>
     <string name="existing_items_show">List of existing items</string>
     <string name="itemToString1"> has an equivalent of </string>
     <string name="itemToString2"> gCO2/100g and is </string>
     <string name="item_alreaydy_on_db">This item is already on the database !</string>
+    <string name="new_repas_date">Date :</string>
+    <string name="ingredient_alreay_exist">This ingredient is already on the list !</string>
+    <string name="addRepasItem">Add item to meal</string>
+    <string name="addRepasItemWeight">Weight (in gram) :</string>
+    <string name="repasItem">Item :</string>
+    <string name="save">Save</string>
+    <string name="repasItemList">Items in you meal :</string>
+    <string name="alertDialogDeleteItemRepas">Do you really want to delete this item ?</string>
+    <string name="delete_item_repas">Delete</string>
+    <string name="cancel_delete_item_repas">Cancel</string>
+    <string name="item_not_found_error">Item not found !</string>
+    <string name="item_repas_deleted">: item deleted !</string>
+    <string name="set_weight_title">Set item weight</string>
+    <string name="item_repas_weigth_set">\'s weigth set to</string>
+
 
 </resources>
