@@ -12,10 +12,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DBAdapter {
-    public static final String KEY_ROWID = "_id";
-    public static final String KEY_NAME = "name";
+    public static final String KEY_ITEMS_ROWID = "_id";
+    public static final String KEY_ITEMS_NAME = "name";
     public static final String KEY_CO2_EQUIVALENT = "co2_equivalent";
-    public static final String KEY_TYPE = "type";
+    public static final String KEY__ITEMS_TYPE = "type";
     private static final String TAG = "DBAdapter";
 
     private static final String DATABASE_NAME = "FoodEqC Database";
@@ -51,24 +51,24 @@ public class DBAdapter {
     //---insert a title into the database---
     public long insertTitle(String name, String co2Equivalent, String type) {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_NAME, name);
+        initialValues.put(KEY_ITEMS_NAME, name);
         initialValues.put(KEY_CO2_EQUIVALENT, co2Equivalent);
-        initialValues.put(KEY_TYPE, type);
+        initialValues.put(KEY__ITEMS_TYPE, type);
         return db.insert(DATABASE_TABLE_ITEM, null, initialValues);
     }
 
     //---deletes a particular title---
     public boolean deleteTitle(long rowId) {
-        return db.delete(DATABASE_TABLE_ITEM, KEY_ROWID + "=" + rowId, null) > 0;
+        return db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + "=" + rowId, null) > 0;
     }
 
     //---retrieves all the titles---
     public Cursor getAllTitles() {
         return db.query(DATABASE_TABLE_ITEM, new String[]{
-                        KEY_ROWID,
-                        KEY_NAME,
+                        KEY_ITEMS_ROWID,
+                        KEY_ITEMS_NAME,
                         KEY_CO2_EQUIVALENT,
-                        KEY_TYPE},
+                        KEY__ITEMS_TYPE},
                 null,
                 null,
                 null,
@@ -80,12 +80,12 @@ public class DBAdapter {
     public Cursor getTitle(long rowId) throws SQLException {
         Cursor mCursor =
                 db.query(true, DATABASE_TABLE_ITEM, new String[]{
-                                KEY_ROWID,
-                                KEY_NAME,
+                                KEY_ITEMS_ROWID,
+                                KEY_ITEMS_NAME,
                                 KEY_CO2_EQUIVALENT,
-                                KEY_TYPE
+                                KEY__ITEMS_TYPE
                         },
-                        KEY_ROWID + "=" + rowId,
+                        KEY_ITEMS_ROWID + "=" + rowId,
                         null,
                         null,
                         null,
@@ -101,14 +101,14 @@ public class DBAdapter {
     public boolean updateItem(long rowId, String isbn,
                               String title, String publisher) {
         ContentValues args = new ContentValues();
-        args.put(KEY_NAME, isbn);
+        args.put(KEY_ITEMS_NAME, isbn);
         args.put(KEY_CO2_EQUIVALENT, title);
-        args.put(KEY_TYPE, publisher);
+        args.put(KEY__ITEMS_TYPE, publisher);
         return db.update(DATABASE_TABLE_ITEM, args,
-                KEY_ROWID + "=" + rowId, null) > 0;
+                KEY_ITEMS_ROWID + "=" + rowId, null) > 0;
     }
 
-    public boolean checksIfExist(String itemName){
+    public boolean checksIfItemExists(String itemName){
         boolean itemExists = false;
     }
 

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
@@ -17,6 +16,8 @@ import java.util.List;
 
 /**
  * Created by Matthieu on 25/05/2016.
+ * Contains all methods to use the SQLite local database.
+ * Every item can be identified by its name : no duplicate allowed
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -26,12 +27,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     //Rows name for item table
-    public static final String KEY_ROWID = "_id";
-    public static final String KEY_NAME = "name";
-    public static final String KEY_CO2_EQUIVALENT = "co2_equivalent";
-    public static final String KEY_TYPE = "type";
+    public static final String KEY_ITEMS_ROWID = "_id";
+    public static final String KEY_ITEMS_NAME = "name";
+    public static final String KEY_ITEMS_CO2_EQUIVALENT = "co2_equivalent";
+    public static final String KEY__ITEMS_TYPE = "type";
 
-    private static final String TAG = "DBAdapter";
+    private static final String TAG = "DBHandler";
     private Context context;
 
 
@@ -40,6 +41,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "create table items (_id integer primary key autoincrement, "
                     + "name text not null, co2_equivalent text not null, "
                     + "type text not null);";
+
+
 
     public DatabaseHandler(Context contextArg) {
         super(contextArg, DATABASE_NAME, null, DATABASE_VERSION);
@@ -60,18 +63,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    //Adding new item
-    //DANGER : crash dès qu'on met un "'" dans le nom ^^
+    // ------------------------------- "Items" Table Methods --------------------------------- //
+
+
+    /**
+     *Adding new item
+     * @param item
+     * @return true si l'ajout est réussi, faux sinon
+     * DANGER : crash dès qu'on met un "'" dans le nom ^^
+     */
     public boolean addItem(Item item){
 
         boolean createSuccessful = false;
 
-        if (!checksIfExist(item)){
+        if (!checksIfItemExists(item)){
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(KEY_NAME,item.getName());
-            values.put(KEY_CO2_EQUIVALENT,String.valueOf(item.getCo2Equivalent()));
-            values.put(KEY_TYPE,item.getType().toString());
+            values.put(KEY_ITEMS_NAME,item.getName());
+            values.put(KEY_ITEMS_CO2_EQUIVALENT,String.valueOf(item.getCo2Equivalent()));
+            values.put(KEY__ITEMS_TYPE,item.getType().toString());
 
             createSuccessful = db.insert(DATABASE_TABLE_ITEM, null, values) > 0;
             db.close();
@@ -86,7 +96,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return createSuccessful;
     }
 
-    //return all items contained in the table "items" of the database
+
+
+    /**
+     *
+     * @return return all items contained in the table "items" of the database
+     */
     public List<Item> getAllItems(){
         List<Item> itemList = new ArrayList<Item>();
         // Select All Query
@@ -108,15 +123,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return itemList;
     }
 
-    public boolean checksIfExist(Item item){
-        return checksIfNameExist(item.getName());
+    /**
+     *
+     * @param item
+     * @return true if the item is in the database
+     */
+    public boolean checksIfItemExists(Item item){
+        return checksIfItemNameExists(item.getName());
     }
 
-    public boolean checksIfNameExist(String name){
+    public boolean checksIfItemNameExists(String name){
         boolean recordExists = false;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + KEY_ROWID + " FROM " + DATABASE_TABLE_ITEM + " WHERE " + KEY_NAME + " = '" + name + "'", null);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_ITEMS_ROWID + " FROM " + DATABASE_TABLE_ITEM + " WHERE " + KEY_ITEMS_NAME + " = '" + name + "'", null);
 
         if(cursor!=null) {
 
@@ -133,8 +153,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Item getItem(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[] {KEY_ROWID, KEY_NAME,
-                        KEY_CO2_EQUIVALENT, KEY_TYPE }, KEY_ROWID + "=?",
+        Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[] {KEY_ITEMS_ROWID, KEY_ITEMS_NAME,
+                        KEY_ITEMS_CO2_EQUIVALENT, KEY__ITEMS_TYPE}, KEY_ITEMS_ROWID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -168,28 +188,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, item.getName());
-        values.put(KEY_CO2_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
-        values.put(KEY_TYPE,item.getType().toString());
+        values.put(KEY_ITEMS_NAME, item.getName());
+        values.put(KEY_ITEMS_CO2_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
+        values.put(KEY__ITEMS_TYPE,item.getType().toString());
 
         // updating row
-        return db.update(DATABASE_TABLE_ITEM, values, KEY_ROWID + " = ?",
+        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
                 new String[] { String.valueOf(item.getId()) });
     }
 
     // Deleting single contact
     public void deleteItem(Item item) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DATABASE_TABLE_ITEM, KEY_ROWID + " = ?",
+        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
                 new String[] { String.valueOf(item.getId()) });
         db.close();
     }
-     //must be used with a name which is in the database
-    public int getIdFromCompleteName(String name){
+
+    /**
+     *
+     * @param name
+     * @return the id of the unique item whose name matches parameter.If there is none, -2 will be returned.
+     * must be used with a name which is in the database
+     */
+    public int getItemIdFromCompleteName(String name){
 
         int returnValue = -2;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + KEY_ROWID + " FROM " + DATABASE_TABLE_ITEM + " WHERE " + KEY_NAME + " = '" + name + "'", null);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_ITEMS_ROWID + " FROM " + DATABASE_TABLE_ITEM + " WHERE " + KEY_ITEMS_NAME + " = '" + name + "'", null);
 
         if(cursor!=null) {
 
@@ -206,7 +232,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //must be used with a name which is in the database
     public Item getItem(String name){
-        return getItem(getIdFromCompleteName(name));
+        return getItem(getItemIdFromCompleteName(name));
     }
 
     public List<Item> queryItemFromName(String name){
@@ -217,8 +243,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // select query
         String sql = "";
         sql += "SELECT * FROM " + DATABASE_TABLE_ITEM;
-        sql += " WHERE " + KEY_NAME + " LIKE '%" + name + "%'";
-        sql += " ORDER BY " + KEY_NAME + " DESC";
+        sql += " WHERE " + KEY_ITEMS_NAME + " LIKE '%" + name + "%'";
+        sql += " ORDER BY " + KEY_ITEMS_NAME + " DESC";
         sql += " LIMIT 0,5";
         // execute the query
         Cursor cursor = db.rawQuery(sql, null);
@@ -243,6 +269,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return items;
     }
 
+    /**
+     *
+     * @param searchTerm
+     * @return a list of items whose name matches searchTerm
+     * used for the autocompletion feature
+     */
     public String[] getItemsFromDb(String searchTerm) {
 
         SQLiteDatabase db = this.getWritableDatabase();

@@ -79,7 +79,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
                 String ingredientName = ingredientText.getText().toString();
                 if (AddNewItemAuxiliary.listContainsMap(ingredientList,ingredientName)){
                     Toast.makeText(getApplication(),R.string.ingredient_alreay_on_the_list,Toast.LENGTH_LONG).show();
-                } else if (!db.checksIfNameExist(ingredientName)) {
+                } else if (!db.checksIfItemNameExists(ingredientName)) {
                     Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
                 } else{
 
