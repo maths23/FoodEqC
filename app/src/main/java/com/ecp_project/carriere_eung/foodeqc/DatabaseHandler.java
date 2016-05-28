@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 
@@ -24,6 +26,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //Database name and tables
     private static final String DATABASE_NAME = "FoodEqC Database";
     private static final String DATABASE_TABLE_ITEM = "items";
+    private static final String DATABASE_TABLE_CITEM = "composedItems";
+    private static final String DATABASE_TABLE_INGREDIENT_RELATION = "ingredient";
     private static final int DATABASE_VERSION = 1;
 
     //Rows name for item table
@@ -32,6 +36,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_ITEMS_CO2_EQUIVALENT = "co2_equivalent";
     public static final String KEY__ITEMS_TYPE = "type";
 
+    //Rows name for composedItem table
+    public static final String KEY_CITEMS_ROWID = "_id";
+    public static final String KEY_CITEMS_NAME = "name";
+    public static final String KEY_CITEMS_CO2_EQUIVALENT = "co2_equivalent";
+    public static final String KEY_CITEMS_TYPE = "type";
+
+    //Rows name for ingredient table
+    public static final String KEY_INGREDIENT_ROWID = "_id";
+    public static final String KEY_INGREDIENT_ITEM_ID ="item_id";
+    public static final String KEY_INGREDIENT_CITEM_ID = "citem_id";
+    public static final String KEY_INGREDIENT_PROPORTION = "proportion";
+
     private static final String TAG = "DBHandler";
     private Context context;
 
@@ -39,8 +55,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //SQL command to create item table
     private static final String DATABASE_CREATE_ITEM =
             "create table items (_id integer primary key autoincrement, "
-                    + "name text not null, co2_equivalent text not null, "
+                    + "name text not null, co2_equivalent real not null, "
                     + "type text not null);";
+
+    //SQL command to create Composed items table
+    public static final String DATABASE_CREATE_CITEM =
+            "create table composedItems (_id integer primary key autoincrement, "
+            + "name text not null, co2_equivalent real not null, "
+            + "type text not null);";
+
+    //SQL command to create ingredient items table
+    public static final String DATABASE_CREATE_INGREDIENT =
+            "create table composedItems (_id integer primary key autoincrement, "
+                    + "item_id integer not null, citem_id not null, "
+                    + "proportion real not null);";
 
 
 
@@ -51,7 +79,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         db.execSQL(DATABASE_CREATE_ITEM);
+        db.execSQL(DATABASE_CREATE_INGREDIENT);
     }
 
     @Override
@@ -75,12 +105,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public boolean addItem(Item item){
 
         boolean createSuccessful = false;
+        boolean createRelationSuccessful = true;
 
         if (!checksIfItemExists(item)){
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_ITEMS_NAME,item.getName());
-            values.put(KEY_ITEMS_CO2_EQUIVALENT,String.valueOf(item.getCo2Equivalent()));
+            values.put(KEY_ITEMS_CO2_EQUIVALENT,item.getCo2Equivalent());
             values.put(KEY__ITEMS_TYPE,item.getType().toString());
 
             createSuccessful = db.insert(DATABASE_TABLE_ITEM, null, values) > 0;
@@ -88,12 +119,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if(createSuccessful){
                 Log.e(TAG, item.getName() + " created.");
             }
+            //create item-composedItem relationships in ingredient table
+            //both conditions are supposed to be actually exactely the same
+            if (item.getType() != ItemType.base && item instanceof ComposedItem){
+                ComposedItem citem = (ComposedItem)item;
+                int id_item = this.getItemIdFromCompleteName(item.getName());
+                for (Ingredient ingredient:((ComposedItem) item).getIngredients()){
+                    values = new ContentValues();
+                    String ingredientName = ingredient.getName();
+                    values.put(KEY_INGREDIENT_ITEM_ID,this.getItemIdFromCompleteName(ingredientName));
+                    values.put(KEY_INGREDIENT_CITEM_ID,id_item);
+                    values.put(KEY_INGREDIENT_PROPORTION,ingredient.getProportion());
+
+                    boolean success = db.insert(DATABASE_TABLE_INGREDIENT_RELATION,null,values) >0;
+                    if (success){
+                        Log.e(TAG,ingredientName + " has been successfully added to " +item.getName() + " list if ingredient");
+                    } else {
+                        createRelationSuccessful = false;
+                    }
+                }
+            }
         } else {
             //à remettre dès que prb résolu !
             //Toast.makeText(context,R.string.item_alreaydy_on_db,Toast.LENGTH_LONG).show();
         }
 
-        return createSuccessful;
+        return createSuccessful && createRelationSuccessful;
     }
 
 
@@ -113,14 +164,77 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Item item = new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1),Double.parseDouble(cursor.getString(2)), ItemType.toItemType(cursor.getString(3)));
-                // Adding contact to list
-                itemList.add(item);
+                if (cursor.getString(3).equals(ItemType.base.toString())){
+                    Item item = getItem(cursor.getInt(0));
+                    // Adding contact to list
+                    itemList.add(item);
+                } else {
+                    ComposedItem citem = (ComposedItem)getItem(cursor.getInt(0));
+                    itemList.add(citem);
+                }
+
             } while (cursor.moveToNext());
         }
         // return contact list
         db.close();
         return itemList;
+    }
+
+    public Item getItem(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[] {KEY_ITEMS_ROWID, KEY_ITEMS_NAME,
+                        KEY_ITEMS_CO2_EQUIVALENT, KEY__ITEMS_TYPE}, KEY_ITEMS_ROWID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        if (cursor.getString(3).equals(ItemType.base.toString())){
+            return new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1),
+                    cursor.getDouble(2),ItemType.toItemType(cursor.getString(3)));
+        } else {
+            List<Ingredient> ingredients = new ArrayList<>();
+            List<Integer>relationId = this.getIngredientsIdOfFromID(id);
+            for(int value:relationId){
+                ingredients.add(getIngredientFromId(value));
+            }
+            return  new ComposedItem(cursor.getInt(0),cursor.getString(1),
+                    cursor.getDouble(2),ItemType.toItemType(cursor.getString(3)),ingredients);
+        }
+
+
+    }
+
+    /**
+     * Updating single item
+     * Requieres a item with an id from the database !
+     * @param item
+     * @return
+     * @throws InvalidParameterException
+     */
+    public int updateItem(Item item) throws InvalidParameterException {
+
+        if (item.getId()<=-1){
+            throw new InvalidParameterException("updateContact must be used on a contact instanciated from the database");
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ITEMS_NAME, item.getName());
+        values.put(KEY_ITEMS_CO2_EQUIVALENT, item.getCo2Equivalent());
+        values.put(KEY__ITEMS_TYPE,item.getType().toString());
+
+        // updating row
+        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
+                new String[] { String.valueOf(item.getId()) });
+    }
+
+    // Deleting single contact
+    public void deleteItem(Item item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
+                new String[] { String.valueOf(item.getId()) });
+        db.close();
     }
 
     /**
@@ -150,20 +264,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return recordExists;
     }
 
-    public Item getItem(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[] {KEY_ITEMS_ROWID, KEY_ITEMS_NAME,
-                        KEY_ITEMS_CO2_EQUIVALENT, KEY__ITEMS_TYPE}, KEY_ITEMS_ROWID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        // return contact
-        return new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1),
-                Double.parseDouble(cursor.getString(2)),ItemType.toItemType(cursor.getString(3)));
-    }
-
     // Getting items Count
     public int getItemsCount() {
 
@@ -178,32 +278,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    // Updating single contact
-    //Requieres a contact with an id from the database !
-    public int updateItem(Item item) throws InvalidParameterException {
 
-        if (item.getId()<=-1){
-            throw new InvalidParameterException("updateContact must be used on a contact instanciated from the database");
-        }
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_ITEMS_NAME, item.getName());
-        values.put(KEY_ITEMS_CO2_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
-        values.put(KEY__ITEMS_TYPE,item.getType().toString());
-
-        // updating row
-        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
-                new String[] { String.valueOf(item.getId()) });
-    }
-
-    // Deleting single contact
-    public void deleteItem(Item item) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
-                new String[] { String.valueOf(item.getId()) });
-        db.close();
-    }
 
     /**
      *
@@ -256,7 +332,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // int productId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(fieldProductId)));
 
                 Item item = new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1),
-                        Double.parseDouble(cursor.getString(2)),ItemType.toItemType(cursor.getString(3)));
+                       cursor.getDouble(2),ItemType.toItemType(cursor.getString(3)));
                 // add to list
                 items.add(item);
 
@@ -294,6 +370,200 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return item;
     }
 
+    public List<Ingredient>getIngredientsOfCItem(ComposedItem citem){
+        List<Ingredient>ingredientsList = new ArrayList<>();
+        int citemId = getItemIdFromCompleteName(citem.getName());
+    }
+
+    // ------------------------------- "ingredient" Table Methods --------------------------------- //
+
+    /**
+     * add an ingredient-relation between an item and a composedItem
+     * @param item_id
+     * @param citem_id
+     * @param proportion : % of total mass
+     * @return true if the relation was added, or if it already exist
+     */
+    public boolean addIngredientRelation(int item_id,int citem_id, double proportion){
+        boolean success =true;
+        if (!checkIfRelationExists(item_id,citem_id)){
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_INGREDIENT_ITEM_ID,item_id);
+            values.put(KEY_INGREDIENT_CITEM_ID,citem_id);
+            values.put(KEY_INGREDIENT_PROPORTION,proportion);
+
+            success = db.insert(DATABASE_TABLE_INGREDIENT_RELATION,null,values) >0;
 
 
+        } else {
+            //à remettre dès que prb résolu !
+            //Toast.makeText(context,R.string.item_alreaydy_on_db,Toast.LENGTH_LONG).show();
+        }
+        return success;
+
+    }
+
+    public List<Integer> getIngredientsIdOfFromID(int citem_id){
+        List<Integer> idList = new ArrayList<>();
+        String selectQuery = "SELECT "+ KEY_INGREDIENT_ROWID + " FROM " +  DATABASE_TABLE_INGREDIENT_RELATION + " WHERE "
+                + KEY_INGREDIENT_CITEM_ID + " = '" + citem_id +"'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                idList.add(cursor.getInt(0));
+
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        cursor.close();
+        db.close();
+        return idList;
+
+    }
+
+    public Ingredient getIngredientFromId(int id){
+        String selectQuery = "SELECT * FROM " +  DATABASE_TABLE_INGREDIENT_RELATION + " WHERE "
+                + KEY_INGREDIENT_ROWID + " = '" + id +"'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        return new Ingredient(cursor.getInt(0),getItem(cursor.getInt(1)),getItem(cursor.getInt(2)),cursor.getDouble(3));
+    }
+
+    /**
+     * check if an ingredient-relation between an item and a composedItem exists
+     * @param item_id
+     * @param citem_id
+     * @return
+     */
+    public boolean checkIfRelationExists(int item_id,int citem_id) {
+        boolean recordExists = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + KEY_INGREDIENT_ROWID + " FROM " + DATABASE_TABLE_INGREDIENT_RELATION +
+                " WHERE " + KEY_INGREDIENT_ITEM_ID + " = '" + item_id + "'" + " AND " + KEY_INGREDIENT_CITEM_ID + " = '" + citem_id +"'",
+                null);
+
+        if(cursor!=null) {
+
+            if(cursor.getCount()>0) {
+                recordExists = true;
+            }
+        }
+
+        cursor.close();
+        db.close();
+        return recordExists;
+    }
+
+    // ------------------------------- "composedItems" Table Methods --------------------------------- //
+
+    /**
+     *Adding new item
+     * @param
+     * @return true si l'ajout est réussi, faux sinon
+     * DANGER : crash dès qu'on met un "'" dans le nom ^^
+     */
+   /* public boolean addComposedItem(ComposedItem item){
+
+        boolean createSuccessful = false;
+
+        if (!checksIfItemExists(item)){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_CITEMS_NAME,item.getName());
+            values.put(KEY_CITEMS_CO2_EQUIVALENT,item.getCo2Equivalent());
+            values.put(KEY_CITEMS_TYPE,item.getType().toString());
+
+            createSuccessful = db.insert(DATABASE_TABLE_CITEM, null, values) > 0;
+            db.close();
+            if(createSuccessful){
+                Log.e(TAG, item.getName() + " created.");
+            }
+        } else {
+            //à remettre dès que prb résolu !
+            //Toast.makeText(context,R.string.item_alreaydy_on_db,Toast.LENGTH_LONG).show();
+        }
+
+        return createSuccessful;
+    }
+
+    /**
+     *
+     * @return return all composedItems contained in the table "items" of the database
+     */
+    public List<ComposedItem> getAllComposedItems(){
+        List<ComposedItem> composedItemList = new ArrayList<ComposedItem>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE_CITEM;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ComposedItem composedItem = new ComposedItem(Integer.parseInt(cursor.getString(0)),cursor.getString(1),cursor.getDouble(2), ItemType.toItemType(cursor.getString(3)));
+                // Adding contact to list
+                composedItemList.add(item);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        db.close();
+        return itemList;
+    }
+
+    public Item getItem(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[] {KEY_ITEMS_ROWID, KEY_ITEMS_NAME,
+                        KEY_ITEMS_CO2_EQUIVALENT, KEY__ITEMS_TYPE}, KEY_ITEMS_ROWID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        // return contact
+        return new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1),
+                cursor.getDouble(2),ItemType.toItemType(cursor.getString(3)));
+    }
+
+    /**
+     * Updating single item
+     * Requieres a item with an id from the database !
+     * @param item
+     * @return
+     * @throws InvalidParameterException
+     */
+    public int updateItem(Item item) throws InvalidParameterException {
+
+        if (item.getId()<=-1){
+            throw new InvalidParameterException("updateContact must be used on a contact instanciated from the database");
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ITEMS_NAME, item.getName());
+        values.put(KEY_ITEMS_CO2_EQUIVALENT, item.getCo2Equivalent());
+        values.put(KEY__ITEMS_TYPE,item.getType().toString());
+
+        // updating row
+        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
+                new String[] { String.valueOf(item.getId()) });
+    }
+
+    // Deleting single contact
+    public void deleteItem(Item item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
+                new String[] { String.valueOf(item.getId()) });
+        db.close();
+    }
 }

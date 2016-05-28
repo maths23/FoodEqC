@@ -7,16 +7,31 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
  * Proportion must be between 0 and 100, and represents the mass proportion of an ingredient in an item
  */
 public class Ingredient {
+    private int id = -1;
     private Item item;
-    private int proportion;
+    private double proportion;
+    private ComposedItem composedItem;
 
-    public Ingredient(Item item, int proportion) throws IllegalArgumentException{
+    public Ingredient(Item item, int proportion,ComposedItem composedItem) throws IllegalArgumentException{
         if (proportion>100 || proportion<0){
             throw new IllegalArgumentException("Proportion must be between 0 and 100");
         }
         else{
             this.item = item;
             this.proportion = proportion;
+            this.composedItem = composedItem;
+        }
+
+    }
+    public Ingredient(int id,Item item, int proportion,ComposedItem composedItem) throws IllegalArgumentException{
+        if (proportion>100 || proportion<0){
+            throw new IllegalArgumentException("Proportion must be between 0 and 100");
+        }
+        else{
+            this.id = id;
+            this.item = item;
+            this.proportion = proportion;
+            this.composedItem = composedItem;
         }
 
     }
@@ -29,11 +44,26 @@ public class Ingredient {
         this.item = item;
     }
 
-    public int getProportion() {
+    public double getProportion() {
         return proportion;
     }
 
-    public void setProportion(int proportion) {
+    public void setProportion(double proportion) {
         this.proportion = proportion;
     }
+
+    public int getId() { return id;}
+
+    public ComposedItem getComposedItem() {
+        return composedItem;
+    }
+
+    public void setComposedItem(ComposedItem composedItem) {
+        this.composedItem = composedItem;
+    }
+
+    public String getName(){
+        return this.getItem().getName();
+    }
+
 }

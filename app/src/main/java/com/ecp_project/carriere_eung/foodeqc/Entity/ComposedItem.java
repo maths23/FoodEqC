@@ -15,14 +15,17 @@ public class ComposedItem extends Item{
     //this mean that Item CO2Equivalent will be sum of the ingredients' cost * 1,2
     private ProcessingCost cost = ProcessingCost.standard;
 
-    public ComposedItem(String name, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
-        super(name, 0, ItemType.local);
-        this.ingredients = ingredients;
-        this.cost = cost;
+    //ne dois pas être utilisé avec des types "base".
+    public ComposedItem(String name,ItemType type, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
+            super(name, 0, type);
+            this.ingredients = ingredients;
+            this.cost = cost;
+
+
     }
 
 
-    public ComposedItem(String name, ArrayList<Ingredient> ingredients) {
+    public ComposedItem(String name,ItemType type, ArrayList<Ingredient> ingredients) {
         super(name, 0, ItemType.local);
         this.ingredients = ingredients;
         this.setCo2Equivalent(computeCO2Equivalent());
@@ -68,4 +71,6 @@ public class ComposedItem extends Item{
         }
         return returnValue;
     }
+
+
 }
