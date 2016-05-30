@@ -16,6 +16,8 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
+import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
@@ -33,15 +35,21 @@ import java.util.HashMap;
 public class AddNewItemActivity extends AppCompatActivity implements  SetProportionDialog.SetProportionDialogListener {
 
     public DatabaseHandler db;
+
+    //creating new item
     EditText itemNameText;
+    Button createItem;
+
+    //inputting and showing ingredients list
     EditText ingredientText;
     ListView lvIngredients;
     Button addIngredient;
-    Button createItem;
     ArrayList<HashMap<String,String>> ingredientList = new ArrayList<HashMap<String,String>>();
     ListAdapter adapter;
     final String TAG_INGREDIENT = "ingredient";
     final String TAG_PROPORTION = "proportion";
+
+    //autocompletion feature
     public CustomAutoCompleteView myAutoComplete;
     public ArrayAdapter<String> myAdapter;
     public String[] item = new String[] {"Please search..."};
@@ -79,6 +87,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
                 String ingredientName = ingredientText.getText().toString();
                 if (AddNewItemAuxiliary.listContainsMap(ingredientList,ingredientName)){
                     Toast.makeText(getApplication(),R.string.ingredient_alreay_on_the_list,Toast.LENGTH_LONG).show();
+                    ingredientText.setText("");
                 } else if (!db.checksIfItemNameExists(ingredientName)) {
                     Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
                 } else{
@@ -88,9 +97,10 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
                     ingredient.put(TAG_PROPORTION, "0");
                     ingredientList.add(ingredient);
                     lvIngredients.setAdapter(adapter);
+                    ingredientText.setText("");
 
                 }
-                ingredientText.setText("");
+
 
             }
         });
@@ -116,10 +126,16 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
         createItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean test = db.addItem(new Item(temporayStorageIngredientName,50.2,ItemType.local));
-                Log.e("Create",""+test);
-                if(test) {
-                    Toast.makeText(getApplication(), (new Item(temporayStorageIngredientName, 50.2, ItemType.local).toString()), Toast.LENGTH_LONG).show();
+                ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+                String itemName = itemNameText.getText().toString();
+                for(HashMap map:ingredientList){
+                    ingredients.add(new Ingredient(db.getItem((String) map.get(TAG_INGREDIENT)),itemName,Double.parseDouble((String)map.get(TAG_PROPORTION))));
+                }
+                ComposedItem toBeAdded = new ComposedItem(itemName,ItemType.local,ingredients);
+                boolean succes = db.addItem(toBeAdded);
+                Log.e("Create ",""+succes);
+                if(succes) {
+                    Toast.makeText(getApplication(), toBeAdded.toString(), Toast.LENGTH_LONG).show();
                 }
             }
         });

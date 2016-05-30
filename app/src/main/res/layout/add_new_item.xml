@@ -48,14 +48,14 @@
             android:text="@string/new_composedItem_add_ingredient"
             android:id="@+id/textView2"
             android:paddingRight="0dp"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.35" />
 
 
         <com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView
             android:id="@+id/autocompleteAddIngredient"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
+            android:layout_weight="0.5"
             android:completionThreshold="1" />
 
         <Button
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:text="@string/addIngredient"
             android:id="@+id/buttonAddIngredient"
-            android:layout_weight="0.2" />
+            android:layout_weight="0.15" />
 
     </LinearLayout>
 

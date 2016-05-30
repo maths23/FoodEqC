@@ -1,6 +1,9 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
 
 /**
  * Created by Matthieu on 19/05/2016.
@@ -17,32 +20,50 @@ public class ComposedItem extends Item{
 
     //ne dois pas être utilisé avec des types "base".
     public ComposedItem(String name,ItemType type, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
-            super(name, 0, type);
-            this.ingredients = ingredients;
-            this.cost = cost;
+        super(name, 0, type);
+        this.ingredients = ingredients;
+        this.cost = cost;
+        this.setCo2Equivalent(computeCO2Equivalent());
 
 
     }
 
 
     public ComposedItem(String name,ItemType type, ArrayList<Ingredient> ingredients) {
-        super(name, 0, ItemType.local);
+        super(name, 0, type);
         this.ingredients = ingredients;
         this.setCo2Equivalent(computeCO2Equivalent());
 
     }
 
+    public ComposedItem(int id, String name, double co2Equivalent, ItemType type, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
+        super(id, name, co2Equivalent, type);
+        this.ingredients = ingredients;
+        this.cost = cost;
+    }
 
+    public ComposedItem(int id, String name, double co2Equivalent, ItemType type, ArrayList<Ingredient> ingredients) {
+        super(id, name, co2Equivalent, type);
+        this.ingredients = ingredients;
+    }
 
     public double computeCO2Equivalent(){
-        double result=-1;
+        double result=0;
         if (this.ingredients.size()>0){
             for (Ingredient ingredient:ingredients){
-                result += ingredient.getItem().getCo2Equivalent()*ingredient.getProportion()*100;
+                result += ingredient.getItem().getCo2Equivalent()*ingredient.getProportion()/100;
             }
         }
-
-        return result*this.getMalusFactor();
+        double test = 1.2;
+        ProcessingCost test2 = ProcessingCost.standard;
+        Log.e("Composed","testing equals "+( test == test2.getMalusFactor()));
+        Log.e("Composed","testing equals bis "+( test == 1.2));
+        Log.e("Composed",""+result);
+        if (this.getCost() == null){
+            Log.e("Composed","c'est ça");
+        }
+        Log.e("Composed",this.cost.toString());
+        return result*this.getCost().getMalusFactor();
     }
 
     public ArrayList<Ingredient> getIngredients() {
@@ -53,24 +74,16 @@ public class ComposedItem extends Item{
         this.ingredients = ingredients;
     }
 
+
     //used to compute CO2equivalent of a composedItem :
     //equals to the sum of its ingredients * this malus
-    public double getMalusFactor(){
-        // On met la valeur à 1 par défault
-        double returnValue=1;
-        switch (this.cost){
-            case low:
-                returnValue = 1.1;
-                break;
-            case standard:
-                returnValue = 1.2;
-                break;
-            case high:
-                returnValue = 1.3;
-                break;
-        }
-        return returnValue;
+
+
+    public ProcessingCost getCost() {
+        return cost;
     }
 
-
+    public void setCost(ProcessingCost cost) {
+        this.cost = cost;
+    }
 }

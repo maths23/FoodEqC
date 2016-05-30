@@ -9,21 +9,22 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
 public class Ingredient {
     private int id = -1;
     private Item item;
+    private String composedItemName;
     private double proportion;
-    private ComposedItem composedItem;
 
-    public Ingredient(Item item, int proportion,ComposedItem composedItem) throws IllegalArgumentException{
+
+    public Ingredient(Item item, String composedItemName, double proportion) throws IllegalArgumentException{
         if (proportion>100 || proportion<0){
             throw new IllegalArgumentException("Proportion must be between 0 and 100");
         }
         else{
             this.item = item;
             this.proportion = proportion;
-            this.composedItem = composedItem;
+            this.composedItemName = composedItemName;
         }
 
     }
-    public Ingredient(int id,Item item, int proportion,ComposedItem composedItem) throws IllegalArgumentException{
+    public Ingredient(int id, Item item, String composedItem, double proportion) throws IllegalArgumentException{
         if (proportion>100 || proportion<0){
             throw new IllegalArgumentException("Proportion must be between 0 and 100");
         }
@@ -31,7 +32,7 @@ public class Ingredient {
             this.id = id;
             this.item = item;
             this.proportion = proportion;
-            this.composedItem = composedItem;
+            this.composedItemName = composedItem;
         }
 
     }
@@ -54,12 +55,12 @@ public class Ingredient {
 
     public int getId() { return id;}
 
-    public ComposedItem getComposedItem() {
-        return composedItem;
+    public String getComposedItemName() {
+        return composedItemName;
     }
 
-    public void setComposedItem(ComposedItem composedItem) {
-        this.composedItem = composedItem;
+    public void setComposedItemName(String composedItemName) {
+        this.composedItemName = composedItemName;
     }
 
     public String getName(){
