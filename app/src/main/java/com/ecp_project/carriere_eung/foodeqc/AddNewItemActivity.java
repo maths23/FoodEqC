@@ -81,6 +81,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
                 new int[]{R.id.textViewIngredientNameDisplay, R.id.textViewIngredientProportionDisplay});
         lvIngredients.setAdapter(adapter);
 
+        Toast.makeText(getApplication(),db.getPath(),Toast.LENGTH_LONG).show();
         addIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

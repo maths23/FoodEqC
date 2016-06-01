@@ -213,6 +213,60 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    public List<Item> getAllItems(ItemType type){
+        List<Item> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery;
+        switch (type){
+            case base:
+                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() + "'";
+                // looping through all rows and adding to list
+                Cursor cursor = db.rawQuery(selectQuery,null);
+                if (cursor.moveToFirst()) {
+                    do {
+                        Item item = getItem(cursor.getInt(0));
+                        // Adding item to list
+                        list.add(item);
+                    } while (cursor.moveToNext());
+                }
+                // return contact list
+                db.close();
+                break;
+            case local:
+               selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'";
+                // looping through all rows and adding to list
+                cursor = db.rawQuery(selectQuery,null);
+                if (cursor.moveToFirst()) {
+                    do {
+                        ComposedItem citem = (ComposedItem) getItem(cursor.getInt(0));
+                        list.add(citem);
+                    } while (cursor.moveToNext());
+                }
+                // return contact list
+                db.close();
+                break;
+            case imported:
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.imported.toString() + "'";
+                // looping through all rows and adding to list
+                cursor = db.rawQuery(selectQuery,null);
+                if (cursor.moveToFirst()) {
+                    do {
+                        ComposedItem citem = (ComposedItem) getItem(cursor.getInt(0));
+                        list.add(citem);
+                    } while (cursor.moveToNext());
+                }
+                // return contact list
+                db.close();
+                break;
+
+
+        }
+        return list;
+    }
+
     /**
      * Updating single item
      * Requieres an item with an id from the database !
@@ -426,6 +480,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             ingredientsList.add(getIngredientFromId(id));
         }
         return ingredientsList;
+    }
+
+    public String getPath(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.getPath();
     }
 
     // ------------------------------- "ingredient" Table Methods --------------------------------- //

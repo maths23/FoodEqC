@@ -36,5 +36,17 @@
     <string name="set_weight_title">Set item weight</string>
     <string name="item_repas_weigth_set">\'s weigth set to</string>
 
+    <string name="all">All</string>
+    <string name="base">Base</string>
+    <string name="local">Local</string>
+    <string name="imported">Imported</string>
+
+    <string-array name="item_type">
+        <item>@string/all</item>
+        <item>@string/base</item>
+        <item>@string/local</item>
+        <item>@string/imported</item>
+    </string-array>
+
 
 </resources>
