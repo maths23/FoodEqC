@@ -58,7 +58,8 @@ public class DisplayItemComplete extends AppCompatActivity {
 
         adapter = new SimpleAdapter(
                 DisplayItemComplete.this, ingredientList, R.layout.display_ingredient_complete, new String[]{TAG_INGREDIENT,TAG_PROPORTION,TAG_EQUIVALENT},
-                new int[]{R.id.textViewIngredientNameDisplay, R.id.textViewIngredientProportionDisplay,R.id.textViewIngredientEquivalentDisplay});
+                new int[]{R.id.textViewIngredientNameDisplay,R.id.textViewIngredientProportionDisplay,R.id.textViewIngredientEquivalentDisplay});
         lvIngredients.setAdapter(adapter);
+
     }
 }
