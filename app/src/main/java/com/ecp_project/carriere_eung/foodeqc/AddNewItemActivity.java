@@ -107,7 +107,7 @@ public class AddNewItemActivity extends AppCompatActivity implements  SetProport
         });
 
 
-
+        //launch the fragment that allow to put in the proportion
         lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
         lvIngredients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
