@@ -3,6 +3,7 @@ package com.ecp_project.carriere_eung.foodeqc;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -29,14 +30,18 @@ import java.util.GregorianCalendar;
  * Allow the user to had a meal.
  */
 public class AddNewRepasActivity extends AppCompatActivity {
+
     private static final int DIALOG_ALERT_DELETE = 100;
+    public static final String EXTRA_MESSAGE = "new meal message";
     private ItemRepas temporaryStorageItemRepas;
 
     final GregorianCalendar c = new GregorianCalendar();
     ItemRepasAdapter adapter;
 
     RepasType repasType;
-    Repas repas = new Repas(c,repasType);
+    Repas repas;
+
+    public DatabaseHandler db;
 
     TextView tvCurrentDate;
     TextView tvRepasType;
@@ -52,6 +57,8 @@ public class AddNewRepasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_repas);
 
+        db =new DatabaseHandler(getApplication());
+        repas = new Repas(c,repasType);
 
         genereItemRepasList();
         repasType = (RepasType)getIntent().getExtras().get("RepasType");
@@ -66,6 +73,8 @@ public class AddNewRepasActivity extends AppCompatActivity {
         initializeAdapter();
         listViewRepasItem.setAdapter(adapter);
 
+
+        //Modification du poids d'un item si click
         listViewRepasItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,6 +84,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
             }
         });
 
+        // Supprimer un item si click long
         listViewRepasItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -107,6 +117,23 @@ public class AddNewRepasActivity extends AppCompatActivity {
                 });
                 AlertDialog alertDialog = alert.create();
                 alertDialog.show();
+            }
+        });
+
+        //Ajout du repas dans la base de donnée
+
+        btnSave = (Button)findViewById(R.id.buttonCreateRepasEntity);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (db.addRepas(repas)) {
+                    String message = "New meal added";
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(AddNewRepasActivity.this,"Failed",Toast.LENGTH_LONG).show();
+                }
             }
         });
 

@@ -114,5 +114,9 @@
     <string name="warning">Warning</string>
     <string name="restaure_db">Restaure default database</string>
     <string name="restaure_db_warning">This will delete all custom and imported items. Do you want to proceed ?</string>
+    <string name="all_meals_list">List of all meals</string>
+    <string name="type_with_two_points">Type :</string>
+    <string name="date_with_two_points">Date :</string>
+    <string name="CO2_equivalent_with_two_points">CO2 Equivalent :</string>
 
 </resources>

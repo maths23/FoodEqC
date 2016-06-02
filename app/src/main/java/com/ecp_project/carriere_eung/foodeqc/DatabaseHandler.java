@@ -772,14 +772,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * DANGER : crash dès qu'on met un "'" dans le nom ^^
      */
     public boolean addRepas(Repas repas) {
-
+        Log.e(TAG, "Quid ?");
         boolean createSuccessful = false;
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_REPAS_DATE, repas.getDate().getTimeInMillis());
+        Log.e(TAG, "date successfully created");
         values.put(KEY_REPAS_REPASTYPE, repas.getRepasType().toString());
+        Log.e(TAG, "repastype successfully created");
         values.put(KEY_REPAS_CO2_EQUIVALENT, repas.getCo2Equivalent());
+        Log.e(TAG, "CO2Equivalent successfully created");
 
         createSuccessful = db.insert(DATABASE_TABLE_REPAS, null, values) > 0;
         db.close();
@@ -795,10 +798,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Repas> getAllRepas() {
         List<Repas> repasList = new ArrayList<Repas>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE_REPAS;
+        String sql = "";
+        sql += "SELECT * FROM " + DATABASE_TABLE_REPAS;
+        sql += " ORDER BY " + KEY_REPAS_DATE + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(sql, null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
@@ -15,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     Button createItem;
     Button createRepas;
     Button showItems;
+    Button showMeals;
     DatabaseHandler db;
 
     @Override
@@ -52,6 +52,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        showMeals = (Button)findViewById(R.id.buttonShowMeals);
+        showMeals.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ShowAllMealsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(AddNewRepasActivity.EXTRA_MESSAGE);
+
+
     }
 
     //putting data from ADEME in the database
