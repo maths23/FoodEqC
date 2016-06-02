@@ -48,5 +48,38 @@
         <item>@string/imported</item>
     </string-array>
 
+    <string name="beef_meat">Beef Meat</string>
+    <string name="pork_meat">Porc Meat</string>
+    <string name="wheat">Wheat</string>
+    <string name="potatoes">Potatoes</string>
+    <string name="tomatoes">Tomatoes</string>
+    <string name="tomatoes_greenhouse">Tomatoes grown in greenhouses</string>
+    <string name="letuce">Letuce</string>
+    <string name="letuce_greenhouse">Letuce grown in greehouses</string>
+    <string name="cucomber">Cucomber</string>
+    <string name="cucomber_greenhouses">Cucomber grown in greehouses</string>
+    <string name="grapes">Grapes</string>
+    <string name="flour">Flour</string>
+    <string name="bread">Bread</string>
+    <string name="sugar">Sugar</string>
+    <string name="alcohol_pure">Alcohol Pure</string>
+    <string name="wine">Wine</string>
+    <string name="calf_meat">Calf meat</string>
+    <string name="cow_milk_whole">Cow Milk (whole)</string>
+    <string name="yoghurt">Yoghurt</string>
+    <string name="cheese">Cheese</string>
+    <string name="butter">Butter</string>
+    <string name="chicken_meat_battery">Chicken meat (battery)</string>
+    <string name="mutton_meat">Mutton meat</string>
+    <string name="egg">Egg</string>
+    <string name="milk_lamb">Milk fed lamp meat</string>
+    <string name="sea_fish_france">Sea fish from near coasts</string>
+    <string name="remote_fish">Remote sea fish (tuna for instance)</string>
+    <string name="shrinks">Shrinks</string>
+    <string name="turkey_meat">Turkey meat</string>
+    <string name="duck_meat">Duck meat</string>
+    <string name="free_range_chicken">Chicken meat (free range)</string>
+    <string name="guinea_fowl_meat">Guinea fowl meat</string>
+    <string name=""
 
 </resources>

@@ -335,8 +335,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Deleting single contact
     public void deleteItem(Item item) {
         SQLiteDatabase db = this.getWritableDatabase();
+        int id = item.getId();
+        if (item instanceof ComposedItem){
+            List<Integer> toBeDeleted = getIngredientsIdOfFromID(id);
+            for (int idToBeDeleted:toBeDeleted){
+                deleteIngredients(idToBeDeleted);
+            }
+        } else {
+            List<Integer> toBeDeleted = getIngredientIdUsingItemId(id);
+            for (int idToBeDeleted:toBeDeleted){
+                deleteIngredients(idToBeDeleted);
+            }
+        }
         db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
                 new String[]{String.valueOf(item.getId())});
+
         db.close();
     }
 
@@ -544,6 +557,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    /**
+     *
+     * @param citem_name
+     * @return the list of the ids of the ingredients containing the composedItem
+     */
     public List<Integer> getIngredientsIdFromName(String citem_name) {
         List<Integer> idList = new ArrayList<>();
         String selectQuery = "SELECT " + KEY_INGREDIENT_ROWID + " FROM " + DATABASE_TABLE_INGREDIENT_RELATION + " WHERE "
@@ -564,6 +582,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return idList;
 
+    }
+
+    /**
+     *
+     * @param item_id
+     * @return the list of ids of the ingredients containing the(simple) item which matches the item_id
+     */
+    public List<Integer> getIngredientIdUsingItemId(int item_id){
+        List<Integer> idList = new ArrayList<>();
+        String selectQuery = "SELECT " + KEY_INGREDIENT_ROWID + " FROM " + DATABASE_TABLE_INGREDIENT_RELATION + " WHERE "
+                + KEY_INGREDIENT_ITEM_ID + " = '" + item_id + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                idList.add(cursor.getInt(0));
+
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        cursor.close();
+        db.close();
+        return idList;
     }
 
     /**
@@ -588,7 +632,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(DATABASE_TABLE_INGREDIENT_RELATION, KEY_INGREDIENT_ROWID + " = ?",
                 new String[]{String.valueOf(ing.getId())});
         db.close();
-}
+    }
+
+    public void deleteIngredients(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_INGREDIENT_RELATION, KEY_INGREDIENT_ROWID + " = ?",
+                new String[]{String.valueOf(id)});
+        db.close();
+    }
     /**
      * check if an ingredient-relation between an item and a composedItem exists
      *

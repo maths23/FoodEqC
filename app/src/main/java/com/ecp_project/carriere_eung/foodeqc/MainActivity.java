@@ -58,22 +58,43 @@ public class MainActivity extends AppCompatActivity {
     //DANGER : crash dès qu'on met un "'" dans le nom ^^
     private void publishItemsInDatabase() {
         Log.d("insert","insertion commencée ...");
-        db = new DatabaseHandler(this);
-        db.addItem(new Item("viande de boeuf",150,ItemType.base));
-        db.addItem(new Item("viande de porc",100,ItemType.base));
-        db.addItem(new Item("viande de poulet",50,ItemType.base));
-        db.addItem(new Item("viande d agneau",120,ItemType.base));
-        db.addItem(new Item("viande d homme",666,ItemType.base));
-        db.addItem(new Item("viande de veau",110,ItemType.base));
-        db.addItem(new Item("carotte",15,ItemType.base));
-        db.addItem(new Item("pommes",20,ItemType.base));
-        if (db.addItem(new Item("thon",45,ItemType.base))){
-            Toast.makeText(getApplication(),"sucess",Toast.LENGTH_LONG);
-            Log.d("insert","ok");
-        } else {
-            Toast.makeText(getApplication(),"failure",Toast.LENGTH_LONG);
-            Log.d("insert","pas ok");
-        };
+        db.addItem(new Item(getString(R.string.wheat),100,ItemType.base));
+        db.addItem(new Item(getString(R.string.potatoes),20,ItemType.base));
+        db.addItem(new Item(getString(R.string.tomatoes),90,ItemType.base));
+        db.addItem(new Item(getString(R.string.tomatoes_greenhouse),734,ItemType.base));
+        db.addItem(new Item(getString(R.string.letuce),77,ItemType.base));
+        db.addItem(new Item(getString(R.string.letuce_greenhouse),2970,ItemType.base));
+        db.addItem(new Item(getString(R.string.cucomber),6,ItemType.base));
+        db.addItem(new Item(getString(R.string.cucomber_greenhouses),587,ItemType.base));
+        db.addItem(new Item(getString(R.string.grapes),19,ItemType.base));
+        db.addItem(new Item(getString(R.string.flour),125,ItemType.base));
+        db.addItem(new Item(getString(R.string.bread),125,ItemType.base));
+        db.addItem(new Item(getString(R.string.sugar),200,ItemType.base));
+        db.addItem(new Item(getString(R.string.alcohol_pure),400,ItemType.base));
+        db.addItem(new Item(getString(R.string.wine),400,ItemType.base));
+        db.addItem(new Item(getString(R.string.calf_meat),15900,ItemType.base));
+        db.addItem(new Item(getString(R.string.cow_milk_whole),329,ItemType.base));
+        db.addItem(new Item(getString(R.string.beef_meat),7330,ItemType.base));
+        db.addItem(new Item(getString(R.string.yoghurt),660,ItemType.base));
+        db.addItem(new Item(getString(R.string.cheese),2000,ItemType.base));
+        db.addItem(new Item(getString(R.string.butter),2700,ItemType.base));
+        db.addItem(new Item(getString(R.string.pork_meat),1410,ItemType.base));
+        db.addItem(new Item(getString(R.string.chicken_meat_battery),770,ItemType.base));
+        db.addItem(new Item(getString(R.string.egg),870,ItemType.base));
+        db.addItem(new Item(getString(R.string.mutton_meat),6330,ItemType.base));
+        db.addItem(new Item(getString(R.string.milk_lamb),8470,ItemType.base));
+        db.addItem(new Item(getString(R.string.sea_fish_france),520,ItemType.base));
+        db.addItem(new Item(getString(R.string.remote_fish),1000,ItemType.base));
+        db.addItem(new Item(getString(R.string.shrinks),2528,ItemType.base));
+        db.addItem(new Item(getString(R.string.turkey_meat),800,ItemType.base));
+        db.addItem(new Item(getString(R.string.duck_meat),990,ItemType.base));
+        db.addItem(new Item(getString(R.string.free_range_chicken),1330,ItemType.base));
+        db.addItem(new Item(getString(R.string.guinea_fowl_meat),1630,ItemType.base));
+
+
+
+
+
         Log.d("insert","insertion finie ...");
     }
 
