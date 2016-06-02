@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
  */
 public class Repas {
 
+    private int id;
     private GregorianCalendar date;
     private RepasType repasType;
 
@@ -28,6 +29,14 @@ public class Repas {
 
         this.elements = new ArrayList<>();
         this.co2Equivalent = 0;
+    }
+
+    public Repas(int id,GregorianCalendar date, RepasType repasType, ArrayList<ItemRepas> elements, double co2Equivalent) {
+        this.id = id;
+        this.date = date;
+        this.repasType = repasType;
+        this.elements = elements;
+        this.co2Equivalent = co2Equivalent;
     }
 
     public GregorianCalendar getDate() {
@@ -73,4 +82,7 @@ public class Repas {
         this.repasType = repasType;
     }
 
+    public int getId() {
+        return this.id;
+    }
 }

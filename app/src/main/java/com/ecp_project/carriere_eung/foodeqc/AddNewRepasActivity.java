@@ -153,17 +153,17 @@ public class AddNewRepasActivity extends AppCompatActivity {
         Item item10 = new Item("Item 10",10, ItemType.base);
         Item item11 = new Item("Item 11",10, ItemType.base);
 
-        ItemRepas itemRepas1 = new ItemRepas(item1,100);
-        ItemRepas itemRepas2 = new ItemRepas(item2,100);
-        ItemRepas itemRepas3 = new ItemRepas(item3,100);
-        ItemRepas itemRepas4 = new ItemRepas(item4,100);
-        ItemRepas itemRepas5 = new ItemRepas(item5,100);
-        ItemRepas itemRepas6 = new ItemRepas(item6,100);
-        ItemRepas itemRepas7 = new ItemRepas(item7,100);
-        ItemRepas itemRepas8 = new ItemRepas(item8,100);
-        ItemRepas itemRepas9 = new ItemRepas(item9,100);
-        ItemRepas itemRepas10 = new ItemRepas(item10,100);
-        ItemRepas itemRepas11 = new ItemRepas(item11,100);
+        ItemRepas itemRepas1 = new ItemRepas(repas,item1,100);
+        ItemRepas itemRepas2 = new ItemRepas(repas,item2,100);
+        ItemRepas itemRepas3 = new ItemRepas(repas,item3,100);
+        ItemRepas itemRepas4 = new ItemRepas(repas,item4,100);
+        ItemRepas itemRepas5 = new ItemRepas(repas,item5,100);
+        ItemRepas itemRepas6 = new ItemRepas(repas,item6,100);
+        ItemRepas itemRepas7 = new ItemRepas(repas,item7,100);
+        ItemRepas itemRepas8 = new ItemRepas(repas,item8,100);
+        ItemRepas itemRepas9 = new ItemRepas(repas,item9,100);
+        ItemRepas itemRepas10 = new ItemRepas(repas,item10,100);
+        ItemRepas itemRepas11 = new ItemRepas(repas,item11,100);
 
         repas.addElement(itemRepas1);
         repas.addElement(itemRepas2);

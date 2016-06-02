@@ -6,15 +6,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
+import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
+import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -29,6 +34,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_TABLE_ITEM = "items";
     private static final String DATABASE_TABLE_CITEM = "composedItems";
     private static final String DATABASE_TABLE_INGREDIENT_RELATION = "ingredients";
+    private static final String DATABASE_TABLE_REPAS = "repas";
+    private static final String DATABASE_TABLE_ITEM_REPAS = "item_repas";
     private static final int DATABASE_VERSION = 1;
 
     //Rows name for item table
@@ -49,6 +56,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_INGREDIENT_ITEM_ID = "item_id";
     public static final String KEY_INGREDIENT_CITEM_NAME = "citem_name";
     public static final String KEY_INGREDIENT_PROPORTION = "proportion";
+
+    //Rows name for repas table
+    public static final String KEY_REPAS_ROWID = "_id";
+    public static final String KEY_REPAS_DATE = "date";
+    public static final String KEY_REPAS_REPASTYPE = "repas_type";
+    public static final String KEY_REPAS_CO2_EQUIVALENT = "co2_equivalent";
+
+    //Rows name for item_repas table
+    public static final String KEY_ITEM_REPAS_ROWID = "_id";
+    public static final String KEY_ITEM_REPAS_REPAS_ID = "repas_id";
+    public static final String KEY_ITEM_REPAS_ITEM_ID = "item_id";
+    public static final String KEY_ITEM_REPAS_POIDS = "poids";
+
 
 
     private static final String TAG = "DBHandler";
@@ -73,6 +93,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     + "item_id integer not null, citem_name text not null, "
                     + "proportion real not null);";
 
+    //SQL command to create repas table
+    public static final String DATABASE_CREATE_REPAS =
+            "create table repas (_id integer primary key autoincrement, "
+                    + KEY_REPAS_DATE+ " integer not null, "
+                    + KEY_REPAS_REPASTYPE+ " text not null, "
+                    + KEY_REPAS_CO2_EQUIVALENT+ " real not null);";
+
+    public static final String DATABASE_CREATE_ITEM_REPAS =
+            "create table item_repas (_id integer primary key autoincrement, "
+                    + KEY_ITEM_REPAS_REPAS_ID+ " integer not null, "
+                    + KEY_ITEM_REPAS_ITEM_ID+ " integer not null, "
+                    + KEY_ITEM_REPAS_POIDS+ " integer not null);";
+
 
     public DatabaseHandler(Context contextArg) {
         super(contextArg, DATABASE_NAME, null, DATABASE_VERSION);
@@ -84,6 +117,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.execSQL(DATABASE_CREATE_ITEM);
         db.execSQL(DATABASE_CREATE_INGREDIENT);
+        db.execSQL(DATABASE_CREATE_REPAS);
+        db.execSQL(DATABASE_CREATE_ITEM_REPAS);
     }
 
     @Override
@@ -219,7 +254,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selectQuery;
         switch (type){
             case base:
-                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
                         + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() + "'";
                 // looping through all rows and adding to list
                 Cursor cursor = db.rawQuery(selectQuery,null);
@@ -234,7 +269,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.close();
                 break;
             case local:
-               selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
                         + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'";
                 // looping through all rows and adding to list
                 cursor = db.rawQuery(selectQuery,null);
@@ -273,7 +308,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Do not convert an item to composedItem or the oppositve
      *
      * @param item
-     * @return
+     * @return int
      * @throws InvalidParameterException
      */
     public int updateItem(Item item) throws InvalidParameterException {
@@ -588,7 +623,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(DATABASE_TABLE_INGREDIENT_RELATION, KEY_INGREDIENT_ROWID + " = ?",
                 new String[]{String.valueOf(ing.getId())});
         db.close();
-}
+    }
     /**
      * check if an ingredient-relation between an item and a composedItem exists
      *
@@ -601,7 +636,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT " + KEY_INGREDIENT_ROWID + " FROM " + DATABASE_TABLE_INGREDIENT_RELATION +
-                        " WHERE " + KEY_INGREDIENT_ITEM_ID + " = '" + item_id + "'" + " AND " + KEY_INGREDIENT_CITEM_NAME +
+                " WHERE " + KEY_INGREDIENT_ITEM_ID + " = '" + item_id + "'" + " AND " + KEY_INGREDIENT_CITEM_NAME +
                 " = '" + getItem(citem_id).getName() + "'", null);
 
         if (cursor != null) {
@@ -615,7 +650,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return recordExists;
     }
-}
+
 
     // ------------------------------- "composedItems" Table Methods --------------------------------- //
 
@@ -653,3 +688,303 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      *
      * @return return all composedItems contained in the table "items" of the database
      */
+
+
+    // ------------------------------- "repas" Table Methods --------------------------------- //
+
+    /**
+     * Adding new repas
+     *
+     * @param repas
+     * @return true si l'ajout est réussi, faux sinon
+     * DANGER : crash dès qu'on met un "'" dans le nom ^^
+     */
+    public boolean addRepas(Repas repas) {
+
+        boolean createSuccessful = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_REPAS_DATE, repas.getDate().getTimeInMillis());
+        values.put(KEY_REPAS_REPASTYPE, repas.getRepasType().toString());
+        values.put(KEY_REPAS_CO2_EQUIVALENT, repas.getCo2Equivalent());
+
+        createSuccessful = db.insert(DATABASE_TABLE_REPAS, null, values) > 0;
+        db.close();
+        if (createSuccessful) {
+            Log.e(TAG, "repas successfully created");
+        }
+        return createSuccessful;
+    }
+
+    /**
+     * @return return all repas contained in the table "repas" of the database
+     */
+    public List<Repas> getAllRepas() {
+        List<Repas> repasList = new ArrayList<Repas>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE_REPAS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Repas repas = getRepas(cursor.getInt(0));
+                // Adding contact to list
+                repasList.add(repas);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        db.close();
+        return repasList;
+    }
+
+    public Repas getRepas(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(DATABASE_TABLE_REPAS, new String[]{KEY_REPAS_ROWID,
+                        KEY_REPAS_DATE, KEY_REPAS_REPASTYPE,
+                        KEY_REPAS_CO2_EQUIVALENT}, KEY_REPAS_ROWID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        //On charge la liste d'item
+        ArrayList<ItemRepas> elements = new ArrayList<>();
+        for (Integer item_repas_id:getItemRepasListFromRepasId(id)) {
+            elements.add(getItemRepasFromId(item_repas_id));
+        }
+
+        //On charge la date
+        GregorianCalendar date = new GregorianCalendar();
+        date.setTimeInMillis(cursor.getLong(1));
+
+        return new Repas(cursor.getInt(0),date, RepasType.stringToRepasType(cursor.getString(2)),elements,cursor.getDouble(3));
+
+    }
+
+    public List<Repas> getAllRepasByRepasType(RepasType type){
+        List<Repas> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery;
+
+        selectQuery = "SELECT * FROM " + DATABASE_TABLE_REPAS + " WHERE "
+                + KEY_REPAS_REPASTYPE + " = '" + type.toString() + "'";
+        // looping through all rows and adding to list
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst()) {
+            do {
+                Repas repas = getRepas(cursor.getInt(0));
+                // Adding item to list
+                list.add(repas);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        db.close();
+
+        return list;
+    }
+
+    /**
+     * Updating single repas
+     * Requieres an item with an id from the database !
+     * Do not convert an item to composedItem or the oppositve
+     *
+     * @param repas
+     * @return int
+     * @throws InvalidParameterException
+     */
+
+    public int updateRepas(Repas repas) throws InvalidParameterException {
+        Boolean UpdateItemSuccess = true;
+        Boolean updateRelationSuccess = true;
+        if (repas.getId() <= -1) {
+            throw new InvalidParameterException("updateItem must be used on a contact instanciated from the database");
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_REPAS_DATE, repas.getDate().getTimeInMillis());
+        values.put(KEY_REPAS_CO2_EQUIVALENT, repas.getCo2Equivalent());
+        values.put(KEY_REPAS_REPASTYPE, repas.getRepasType().toString());
+
+
+        //updating ingredients relationship
+
+        //checking if any local item has been removed from the ingredients list
+        List<Integer> newBaseItemIds = new ArrayList<>();
+        for (ItemRepas itemRepas : repas.getElements()){
+            newBaseItemIds.add(itemRepas.getItem().getId());
+        }
+        List<Integer> formerItemRepasIds = getItemRepasListFromRepasId(repas.getId());
+        for (int id:formerItemRepasIds) {
+            if (!newBaseItemIds.contains(getItemRepasFromId(id).getItem().getId())){
+                deleteItemRepas(id);
+            }
+        }
+
+        //adding new ingredients or updating already existing ones.
+        for (ItemRepas itemRepas : repas.getElements()) {
+            ContentValues valuesItemRepas = new ContentValues();
+            int itemId = itemRepas.getItem().getId();
+            valuesItemRepas.put(KEY_ITEM_REPAS_ITEM_ID, itemId);
+            valuesItemRepas.put(KEY_ITEM_REPAS_REPAS_ID, repas.getId());
+            valuesItemRepas.put(KEY_ITEM_REPAS_POIDS, itemRepas.getPoids());
+            if (checkIfItemRepasExists(itemRepas.getRepas().getId(),itemRepas.getItem().getId())) {
+                db.update(DATABASE_TABLE_ITEM_REPAS, valuesItemRepas, KEY_INGREDIENT_ROWID + " = ?",
+                        new String[]{String.valueOf(itemRepas.getId())});
+            } else {
+                boolean success = db.insert(DATABASE_TABLE_ITEM_REPAS, null, valuesItemRepas) > 0;
+                if (success) {
+                    Log.e(TAG, itemRepas.getItem().getName() + " has been successfully added to meal");
+                }
+            }
+        }
+
+        // updating row
+        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
+                new String[]{String.valueOf(repas.getId())});
+    }
+
+
+    // Deleting single contact
+    public void deleteRepas(Repas repas) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
+                new String[]{String.valueOf(repas.getId())});
+        for (ItemRepas itemRepas:repas.getElements()
+             ) {
+            db.delete(DATABASE_TABLE_ITEM_REPAS,KEY_ITEM_REPAS_ROWID + " = ?",
+                    new String[]{String.valueOf(repas.getId())});
+        }
+        db.close();
+
+        //À implémenter la suppression des repastype lié
+    }
+
+    // Getting items Count
+    public int getRepasCount() {
+
+        String countQuery = "SELECT  * FROM " + DATABASE_TABLE_REPAS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+
+    }
+
+    // ------------------------------- "item_repas" Table Methods --------------------------------- //
+
+    /**
+     * add an item_repas-relation between an item and a repas
+     *
+     * @param item_id
+     * @param repas_id
+     * @param poids : weigth of the item in the meal
+     * @return true if the relation was added, or if it already exist
+     */
+    public boolean addItemRepasRelation(int item_id, int repas_id, double poids) {
+        boolean success = true;
+        if (!checkIfItemRepasExists(repas_id,item_id)) {
+
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ITEM_REPAS_ITEM_ID, item_id);
+            values.put(KEY_ITEM_REPAS_REPAS_ID, repas_id);
+            values.put(KEY_ITEM_REPAS_POIDS, poids);
+
+            success = db.insert(DATABASE_TABLE_ITEM_REPAS, null, values) > 0;
+        }
+        else {
+            Toast.makeText(context,R.string.item_repas_already_on_db,Toast.LENGTH_LONG).show();
+        }
+        return success;
+
+    }
+
+    /**
+     * @param repas_id
+     * @return the list of item repas id from a repas id
+     */
+    public List<Integer> getItemRepasListFromRepasId(int repas_id) {
+        List<Integer> idList = new ArrayList<>();
+        String selectQuery = "SELECT " + KEY_ITEM_REPAS_ROWID + " FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
+                + KEY_ITEM_REPAS_REPAS_ID + " = '" + getItem(repas_id).getId() + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                idList.add(cursor.getInt(0));
+
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        cursor.close();
+        db.close();
+        return idList;
+
+    }
+
+    /**
+     * @param id
+     * @return the ingredient within the database that matches the id
+     */
+    public ItemRepas getItemRepasFromId(int id) {
+        String selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
+                + KEY_ITEM_REPAS_ROWID + " = '" + id + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        return new ItemRepas(cursor.getInt(0),getRepas(cursor.getInt(1)), getItem(cursor.getInt(2)), cursor.getInt(3));
+    }
+
+
+    public void deleteItemRepas(int item_repas_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_ITEM_REPAS, KEY_ITEM_REPAS_ROWID + " = ?",
+                new String[]{String.valueOf(item_repas_id)});
+        db.close();
+    }
+    /**
+     * check if an ingredient-relation between an item and a composedItem exists
+     *
+     * @param repas_id
+     * @param item_id
+     * @return
+     */
+    public boolean checkIfItemRepasExists(int repas_id, int item_id) {
+        boolean recordExists = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + KEY_ITEM_REPAS_ROWID + " FROM " + DATABASE_TABLE_ITEM_REPAS +
+                " WHERE " + KEY_ITEM_REPAS_ITEM_ID + " = '" + item_id + "'" + " AND " + KEY_ITEM_REPAS_REPAS_ID +
+                " = '" + repas_id + "'", null);
+
+        if (cursor != null) {
+
+            if (cursor.getCount() > 0) {
+                recordExists = true;
+            }
+        }
+
+        cursor.close();
+        db.close();
+        return recordExists;
+    }
+
+
+
+}
+
+

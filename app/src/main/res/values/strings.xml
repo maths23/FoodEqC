@@ -40,6 +40,7 @@
     <string name="base">Base</string>
     <string name="local">Local</string>
     <string name="imported">Imported</string>
+    <string name="item_repas_already_on_db">Item already in the meal !</string>
 
     <string-array name="item_type">
         <item>@string/all</item>
