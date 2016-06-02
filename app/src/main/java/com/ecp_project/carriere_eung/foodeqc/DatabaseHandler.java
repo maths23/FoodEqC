@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
+import com.ecp_project.carriere_eung.foodeqc.MainActivity;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -84,10 +86,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.execSQL(DATABASE_CREATE_ITEM);
         db.execSQL(DATABASE_CREATE_INGREDIENT);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_ITEM);
+
+        // Create tables again
+        onCreate(db);
+    }
+
+    public void restaureBaseDatabase(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_ITEM);
 
@@ -160,7 +173,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Item> getAllItems() {
         List<Item> itemList = new ArrayList<Item>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE_ITEM;
+        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE_ITEM + " ORDER BY " + KEY_ITEMS_NAME ;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -192,6 +205,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
+        Log.e("DBHandler",""+cursor.getCount());
         String itemName = cursor.getString(1);
 
         if (cursor.getString(3).equals(ItemType.base.toString())) {
@@ -206,7 +220,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (cursor.getString(1).equals("thon aux carottes")){
                 Log.e("naming", "c'est aussi ça");
             }
-            return new ComposedItem(cursor.getString(1), ItemType.toItemType(cursor.getString(3)), ingredients,
+            return new ComposedItem(Integer.parseInt(cursor.getString(0)),cursor.getString(1), ItemType.toItemType(cursor.getString(3)), ingredients,
                     ProcessingCost.toProcessingCost(cursor.getDouble(2)));
         }
 
@@ -220,7 +234,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         switch (type){
             case base:
                  selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
-                        + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() + "'";
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
                 // looping through all rows and adding to list
                 Cursor cursor = db.rawQuery(selectQuery,null);
                 if (cursor.moveToFirst()) {
@@ -235,7 +249,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 break;
             case local:
                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
-                        + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'";
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
                 // looping through all rows and adding to list
                 cursor = db.rawQuery(selectQuery,null);
                 if (cursor.moveToFirst()) {
@@ -351,6 +365,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(item.getId())});
 
         db.close();
+    }
+
+    public void deleteAllItem(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
+                new String[]{null});
     }
 
     /**

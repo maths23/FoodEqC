@@ -54,42 +54,71 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //put fake Data in db
+    //putting data from ADEME in the database
+    //Equivalent are in gramme of C02 per 100g
     //DANGER : crash dès qu'on met un "'" dans le nom ^^
-    private void publishItemsInDatabase() {
+    public void publishItemsInDatabase() {
         Log.d("insert","insertion commencée ...");
-        db.addItem(new Item(getString(R.string.wheat),100,ItemType.base));
-        db.addItem(new Item(getString(R.string.potatoes),20,ItemType.base));
-        db.addItem(new Item(getString(R.string.tomatoes),90,ItemType.base));
-        db.addItem(new Item(getString(R.string.tomatoes_greenhouse),734,ItemType.base));
-        db.addItem(new Item(getString(R.string.letuce),77,ItemType.base));
-        db.addItem(new Item(getString(R.string.letuce_greenhouse),2970,ItemType.base));
-        db.addItem(new Item(getString(R.string.cucomber),6,ItemType.base));
-        db.addItem(new Item(getString(R.string.cucomber_greenhouses),587,ItemType.base));
-        db.addItem(new Item(getString(R.string.grapes),19,ItemType.base));
-        db.addItem(new Item(getString(R.string.flour),125,ItemType.base));
-        db.addItem(new Item(getString(R.string.bread),125,ItemType.base));
-        db.addItem(new Item(getString(R.string.sugar),200,ItemType.base));
-        db.addItem(new Item(getString(R.string.alcohol_pure),400,ItemType.base));
-        db.addItem(new Item(getString(R.string.wine),400,ItemType.base));
-        db.addItem(new Item(getString(R.string.calf_meat),15900,ItemType.base));
-        db.addItem(new Item(getString(R.string.cow_milk_whole),329,ItemType.base));
-        db.addItem(new Item(getString(R.string.beef_meat),7330,ItemType.base));
-        db.addItem(new Item(getString(R.string.yoghurt),660,ItemType.base));
-        db.addItem(new Item(getString(R.string.cheese),2000,ItemType.base));
-        db.addItem(new Item(getString(R.string.butter),2700,ItemType.base));
-        db.addItem(new Item(getString(R.string.pork_meat),1410,ItemType.base));
-        db.addItem(new Item(getString(R.string.chicken_meat_battery),770,ItemType.base));
-        db.addItem(new Item(getString(R.string.egg),870,ItemType.base));
-        db.addItem(new Item(getString(R.string.mutton_meat),6330,ItemType.base));
-        db.addItem(new Item(getString(R.string.milk_lamb),8470,ItemType.base));
-        db.addItem(new Item(getString(R.string.sea_fish_france),520,ItemType.base));
-        db.addItem(new Item(getString(R.string.remote_fish),1000,ItemType.base));
-        db.addItem(new Item(getString(R.string.shrinks),2528,ItemType.base));
-        db.addItem(new Item(getString(R.string.turkey_meat),800,ItemType.base));
-        db.addItem(new Item(getString(R.string.duck_meat),990,ItemType.base));
-        db.addItem(new Item(getString(R.string.free_range_chicken),1330,ItemType.base));
-        db.addItem(new Item(getString(R.string.guinea_fowl_meat),1630,ItemType.base));
+        db =new DatabaseHandler(getApplication());
+        if (db.getItemsCount() == 0){
+            db.addItem(new Item(getString(R.string.wheat),100*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.potatoes),20*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.tomatoes),90*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.tomatoes_greenhouse),734*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.letuce),77*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.letuce_greenhouse),2970*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.cucomber),6*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.cucomber_greenhouses),587*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.grapes),19*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.flour),125*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.bread),125*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.sugar),200*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.alcohol_pure),400*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.wine),400*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.calf_meat),15900*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.cow_milk_whole),329*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.beef_meat),7330*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.yoghurt),660*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.cheese),2000*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.butter),2700*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.pork_meat),1410*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.chicken_meat_battery),770*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.egg),870*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.mutton_meat),6330*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.milk_lamb),8470*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.sea_fish_france),520*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.remote_fish),1000*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.shrinks),2528*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.turkey_meat),800*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.duck_meat),990*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.free_range_chicken),1330*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.guinea_fowl_meat),1630*44/12/10,ItemType.base));
+
+            db.addItem(new Item(getString(R.string.bread),137*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.pasta),383*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.rice),120*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.semoule),120*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.viennoiserie),809*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.biscuits),684*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.patisserie),965*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.charcuterie),1410*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.vegetables_no_potatoes),122*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.dried_pulse),64*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.fruits),122*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.pizza),829*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.sandwitch),1015*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.soup),238*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.industrial_meals),1849*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.stewed_fruits),32*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.water_bottled),6*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.fruit_juice),64*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.coffee),200*44/12/10,ItemType.base));
+            db.addItem(new Item(getString(R.string.tea),100*44/12/10,ItemType.base));
+
+
+
+        }
+
 
 
 

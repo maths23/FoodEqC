@@ -1,5 +1,6 @@
 package com.ecp_project.carriere_eung.foodeqc;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,28 +30,37 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
     ArrayAdapter<String> spinnerAdapter;
     final String TAG_IIEM = "item";
     final String TAG_EQUIVALENT = "equivalent";
+    final String TAG_ID = "id";
     ArrayList<HashMap<String,String>> itemList;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_existing_item);
-        lvItem = (ListView)findViewById(R.id.listViewExistingItem);
-        itemList = new ArrayList<HashMap<String,String>>();
-        db =new DatabaseHandler(getApplication());
 
-        for(Item item:db.getAllItems()){
-            HashMap<String, String> itemMap = new HashMap<String, String>();
-            itemMap.put(TAG_IIEM, item.getName());
-            itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
-            itemList.add(itemMap);
-        }
+        //Preparing the listView displaying the existing items
+        lvItem = (ListView)findViewById(R.id.listViewExistingItem);
+        itemList = harvestItems();
+        db =new DatabaseHandler(getApplication());
         Toast.makeText(getApplication(),"number of items : "+ db.getItemsCount(),Toast.LENGTH_LONG).show();
+
 
 
         adapter = new SimpleAdapter(
                 DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
-                new int[]{R.id.textViewDisplayItemName, R.id.textViewDisplayItemEquivalent});
+                new int[]{R.id.textViewDisplayItemName,R.id.textViewDisplayItemEquivalent});
         lvItem.setAdapter(adapter);
+        lvItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("DisplayEI, on click","test");
+                Log.e("DisplayEI, on click",""+itemList.get(position).get(TAG_ID));
+                Intent intent = new Intent(getApplicationContext(),DisplayItemComplete.class);
+                int item_id = db.getItem(Integer.parseInt(itemList.get(position).get(TAG_ID))).getId();
+                intent.putExtra("item_id",item_id);
+                startActivity(intent);
+            }
+        });
+
 
         spinner = (Spinner)findViewById(R.id.spinnerChooseItemType);
         final ArrayList<String> types = new ArrayList<>();
@@ -88,28 +98,47 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     *
+     * @return all items from the database, so that they can be displayed
+     */
     public ArrayList<HashMap<String,String>> harvestItems(){
         DatabaseHandler db =new DatabaseHandler(getApplication());
         ArrayList<HashMap<String,String>> itemList = new ArrayList<HashMap<String,String>>();
+        HashMap<String,String> baseItemMap = new HashMap<>();
+        baseItemMap.put(TAG_IIEM,getString(R.string.item_name));
+        baseItemMap.put(TAG_EQUIVALENT,getString(R.string.CO2_equivalent));
         for(Item item:db.getAllItems()){
             HashMap<String, String> itemMap = new HashMap<String, String>();
             itemMap.put(TAG_IIEM, item.getName());
             itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
+            Log.e("DisplayEI, harvest",""+item.getId());
+            itemMap.put(TAG_ID,String.valueOf(item.getId()));
             itemList.add(itemMap);
         }
+        db.close();
         return  itemList;
     }
 
+    /**
+     *
+     * @param type
+     * @return all items of a given type from the database, so that they can be displayed
+     */
     public ArrayList<HashMap<String,String>> harvestItems(ItemType type){
         DatabaseHandler db =new DatabaseHandler(getApplication());
+        HashMap<String,String> baseItemMap = new HashMap<>();
+        baseItemMap.put(TAG_IIEM,getString(R.string.item_name));
+        baseItemMap.put(TAG_EQUIVALENT,getString(R.string.CO2_equivalent));
         ArrayList<HashMap<String,String>> itemList = new ArrayList<HashMap<String,String>>();
         for(Item item:db.getAllItems(type)){
             HashMap<String, String> itemMap = new HashMap<String, String>();
             itemMap.put(TAG_IIEM, item.getName());
             itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
+            itemMap.put(TAG_ID,String.valueOf(item.getId()));
             itemList.add(itemMap);
         }
+        db.close();
         return  itemList;
     }
 }

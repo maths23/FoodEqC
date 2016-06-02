@@ -36,6 +36,11 @@
     <string name="set_weight_title">Set item weight</string>
     <string name="item_repas_weigth_set">\'s weigth set to</string>
 
+    <string name="ingredient">Ingredient</string>
+    <string name="proportion">Proportion</string>
+    <string name="ingredient_equivalent">Ingredient Equivalent</string>
+
+    <string name="type">Type</string>
     <string name="all">All</string>
     <string name="base">Base</string>
     <string name="local">Local</string>
@@ -47,6 +52,10 @@
         <item>@string/local</item>
         <item>@string/imported</item>
     </string-array>
+
+    <string name="item_name">Item name</string>
+    <string name="CO2_equivalent"> gramme of CO2 equivalent per 100g</string>
+    <string name="CO2_equivalent_short"> gC02/100g </string>
 
     <string name="beef_meat">Beef Meat</string>
     <string name="pork_meat">Porc Meat</string>
@@ -80,6 +89,29 @@
     <string name="duck_meat">Duck meat</string>
     <string name="free_range_chicken">Chicken meat (free range)</string>
     <string name="guinea_fowl_meat">Guinea fowl meat</string>
-    <string name=""
+
+    <string name="pasta">Pasta</string>
+    <string name="rice">Rice</string>
+    <string name="semoule">Semolina</string>
+    <string name="viennoiserie">Pastry</string>
+    <string name="biscuits">biscuits</string>
+    <string name="patisserie">Cake</string>
+    <string name="charcuterie">Pork product</string>
+    <string name="vegetables_no_potatoes">Vegetables, except potatoes</string>
+    <string name="dried_pulse">Dried pulses</string>
+    <string name="fruits">Fruits</string>
+    <string name="pizza">Pizza</string>
+    <string name="sandwitch">Sandwitch</string>
+    <string name="soup">Soup</string>
+    <string name="industrial_meals">Industrial meals</string>
+    <string name="stewed_fruits">Stewed Fruits</string>
+    <string name="water_bottled">Bottled water</string>
+    <string name="fruit_juice">Fruit Juice</string>
+    <string name="coffee">Coffee</string>
+    <string name="tea">Tea</string>
+
+    <string name="warning">Warning</string>
+    <string name="restaure_db">Restaure default database</string>
+    <string name="restaure_db_warning">This will delete all custom and imported items. Do you want to proceed ?</string>
 
 </resources>

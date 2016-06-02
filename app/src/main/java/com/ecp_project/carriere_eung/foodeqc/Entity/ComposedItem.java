@@ -36,15 +36,19 @@ public class ComposedItem extends Item{
 
     }
 
-    public ComposedItem(int id, String name, double co2Equivalent, ItemType type, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
-        super(id, name, co2Equivalent, type);
+    public ComposedItem(int id, String name, ItemType type, ArrayList<Ingredient> ingredients, ProcessingCost cost) {
+        super(id, name, 0, type);
         this.ingredients = ingredients;
         this.cost = cost;
+        this.setCo2Equivalent(computeCO2Equivalent());
+
     }
 
-    public ComposedItem(int id, String name, double co2Equivalent, ItemType type, ArrayList<Ingredient> ingredients) {
-        super(id, name, co2Equivalent, type);
+    public ComposedItem(int id, String name, ItemType type, ArrayList<Ingredient> ingredients) {
+        super(id, name, 0, type);
         this.ingredients = ingredients;
+        this.setCo2Equivalent(computeCO2Equivalent());
+
     }
 
     public double computeCO2Equivalent(){
