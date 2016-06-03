@@ -17,7 +17,6 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
-import com.ecp_project.carriere_eung.foodeqc.MainActivity;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;

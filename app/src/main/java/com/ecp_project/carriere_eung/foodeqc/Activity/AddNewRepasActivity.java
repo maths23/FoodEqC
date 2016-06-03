@@ -1,4 +1,4 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,12 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
+import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
 import java.util.GregorianCalendar;
 

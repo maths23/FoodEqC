@@ -6,8 +6,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import com.ecp_project.carriere_eung.foodeqc.AddNewItemActivity;
-import com.ecp_project.carriere_eung.foodeqc.MainActivity;
+import com.ecp_project.carriere_eung.foodeqc.Activity.AddNewItemActivity;
 
 /**
  * Created by Matthieu on 27/05/2016.

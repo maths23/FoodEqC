@@ -1,15 +1,15 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.RepasAdapter;
+import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 

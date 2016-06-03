@@ -8,29 +8,29 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddNewItemActivity">
+        <activity android:name=".Activity.AddNewItemActivity">
 
         </activity>
-        <activity android:name=".AddNewRepasActivity">
+        <activity android:name=".Activity.AddNewRepasActivity">
 
         </activity>
-        <activity android:name=".AddNewRepasTypeActivity">
+        <activity android:name=".Activity.AddNewRepasTypeActivity">
 
         </activity>
-        <activity android:name=".DisplayExistingItemActivity">
+        <activity android:name=".Activity.DisplayExistingItemActivity">
 
         </activity>
         <activity android:name=".DisplayItemComplete">
 
         </activity>
-        <activity android:name=".ShowAllMealsActivity">
+        <activity android:name=".Activity.ShowAllMealsActivity">
 
         </activity>
 

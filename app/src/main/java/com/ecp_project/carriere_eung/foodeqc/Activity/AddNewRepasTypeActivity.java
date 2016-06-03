@@ -1,4 +1,4 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
 /**
  * Created by eung on 21/05/16.

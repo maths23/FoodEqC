@@ -1,4 +1,4 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -16,10 +16,13 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
+import com.ecp_project.carriere_eung.foodeqc.CustomAutoCompleteTextChangedListener;
+import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
-import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
+import com.ecp_project.carriere_eung.foodeqc.R;
+import com.ecp_project.carriere_eung.foodeqc.SetProportionDialog;
 import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
 
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ import java.util.HashMap;
  * [NOTE] Pensez à ajouter la posibilité de rentrer directement la proportion avec une syntaxe du style "nom /proportion"
  * mais attention aux doublons + utiliser un clean string, pour que "test", et "test " soit considéré comme la même chose.
  */
-public class AddNewItemActivity extends AppCompatActivity implements  SetProportionDialog.SetProportionDialogListener {
+public class AddNewItemActivity extends AppCompatActivity implements SetProportionDialog.SetProportionDialogListener {
 
     public DatabaseHandler db;
 

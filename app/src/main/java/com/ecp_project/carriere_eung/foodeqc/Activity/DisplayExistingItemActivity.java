@@ -1,4 +1,4 @@
-package com.ecp_project.carriere_eung.foodeqc;
+package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,11 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
+import com.ecp_project.carriere_eung.foodeqc.DisplayItemComplete;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
