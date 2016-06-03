@@ -24,6 +24,7 @@ public class Repas {
 
 
     public Repas(GregorianCalendar date, RepasType repasType) {
+        this.id = -1;
         this.date = date;
         this.repasType = repasType;
 

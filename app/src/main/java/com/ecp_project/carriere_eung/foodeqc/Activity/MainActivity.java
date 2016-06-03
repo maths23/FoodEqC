@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
@@ -66,8 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(AddNewRepasActivity.EXTRA_MESSAGE);
+        if (message == null) {
+            Toast.makeText(MainActivity.this,"Pas d'extras dans l'intent",Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
 
-
+        }
     }
 
     //putting data from ADEME in the database

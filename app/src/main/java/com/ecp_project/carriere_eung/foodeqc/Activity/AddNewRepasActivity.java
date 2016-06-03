@@ -1,7 +1,6 @@
 package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
+import com.ecp_project.carriere_eung.foodeqc.CustomAutoCompleteTextChangedListener;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
@@ -24,8 +26,10 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
 import com.ecp_project.carriere_eung.foodeqc.R;
+import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
 
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 /**
  * Created by eung on 21/05/16.
@@ -39,19 +43,26 @@ public class AddNewRepasActivity extends AppCompatActivity {
 
     final GregorianCalendar c = new GregorianCalendar();
     ItemRepasAdapter adapter;
+    ArrayAdapter<String> myAdapter;
+    public String[] item = new String[] {"Please search..."};
 
     RepasType repasType;
     Repas repas;
+    boolean newMeal;
 
     public DatabaseHandler db;
 
     TextView tvCurrentDate;
     TextView tvRepasType;
-    EditText editTextAddRepasType;
+
+
+    CustomAutoCompleteView myAutoComplete;
+    EditText editTextAddRepasItem;
     EditText editTextAddRepasTypeWeight;
     ListView listViewRepasItem;
     Button btnAddRepasItem;
     Button btnSave;
+
 
 
     @Override
@@ -59,17 +70,37 @@ public class AddNewRepasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_repas);
 
-        db =new DatabaseHandler(getApplication());
-        repas = new Repas(c,repasType);
+        db = new DatabaseHandler(getApplication());
+        int repas_id = getIntent().getIntExtra(ShowAllMealsActivity.EXTRA_REPAS,-1);
+        if ( repas_id == -1)
+        {
+            repasType = (RepasType)getIntent().getExtras().get("RepasType");
+            repas = new Repas(c,repasType);
+            newMeal = true;
+        }
+        else {
+            repas = db.getRepas(repas_id);
+            repasType = repas.getRepasType();
+            newMeal = false;
+        }
 
-        genereItemRepasList();
-        repasType = (RepasType)getIntent().getExtras().get("RepasType");
+
+
 
         tvCurrentDate = (TextView)findViewById(R.id.tvCurrentDate);
         tvCurrentDate.setText(new StringBuilder().append("Le ").append(c.get(GregorianCalendar.DAY_OF_MONTH)).append("/").append(c.get(GregorianCalendar.MONTH) + 1).append("/").append(c.get(GregorianCalendar.YEAR)).append(" à ").append(c.get(GregorianCalendar.HOUR) + c.get(GregorianCalendar.AM_PM)).append(":").append(c.get(GregorianCalendar.MINUTE)));
 
         tvRepasType = (TextView)findViewById(R.id.tvRepasType);
         tvRepasType.setText(stringRepasType(repasType));
+
+        editTextAddRepasTypeWeight = (EditText)findViewById(R.id.editTextAddRepasTypeWeight);
+        editTextAddRepasItem = (EditText) findViewById(R.id.editTextAddRepasItem);
+
+        myAutoComplete = (CustomAutoCompleteView)findViewById(R.id.editTextAddRepasItem);
+        myAutoComplete.addTextChangedListener(new CustomAutoCompleteTextChangedListener(this));
+        myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,item);
+        myAutoComplete.setAdapter(myAdapter);
+
 
         listViewRepasItem = (ListView)findViewById(R.id.listViewRepasItem);
         initializeAdapter();
@@ -128,22 +159,50 @@ public class AddNewRepasActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (db.addRepas(repas)) {
-                    String message = "New meal added";
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    startActivity(intent);
+                if (newMeal) {
+                    if (db.addRepas(repas)) {
+                        String message = "New meal added";
+
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra(EXTRA_MESSAGE,message);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(AddNewRepasActivity.this, "Failed", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    if (db.updateRepas(repas) > 0) {
+                        String message = "Meal updated";
+                        Intent intent = new Intent(getApplicationContext(), ShowAllMealsActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(AddNewRepasActivity.this, "Failed", Toast.LENGTH_LONG).show();
+                    }
                 }
-                else {
-                    Toast.makeText(AddNewRepasActivity.this,"Failed",Toast.LENGTH_LONG).show();
-                }
+
             }
         });
 
+        btnAddRepasItem = (Button)findViewById(R.id.buttonRepasAddItem);
+        btnAddRepasItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String itemName = editTextAddRepasItem.getText().toString();
+                if (!db.checksIfItemNameExists(itemName)) {
+                    Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
+                } else{
+                    int poids = Integer.parseInt(editTextAddRepasTypeWeight.getText().toString());
+                    Item item = db.getItem(itemName);
+                    ItemRepas itemRepas = new ItemRepas(repas,item,poids);
+                    repas.addElement(itemRepas);
+                    listViewRepasItem.setAdapter(adapter);
+                    editTextAddRepasItem.setText("");
 
-
-
-
+                }
+            }
+        });
     }
+
+
 
     public void initializeAdapter() {
         adapter = new ItemRepasAdapter(AddNewRepasActivity.this,repas.getElements());
@@ -216,14 +275,6 @@ public class AddNewRepasActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.cancel_delete_item_repas, new CancelOnClickListener());
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_ALERT_DELETE:
-
-        }
-        return super.onCreateDialog(id);
     }
 
     private final class CancelOnClickListener implements

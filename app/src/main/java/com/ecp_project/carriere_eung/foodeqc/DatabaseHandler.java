@@ -771,23 +771,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * DANGER : crash dès qu'on met un "'" dans le nom ^^
      */
     public boolean addRepas(Repas repas) {
-        Log.e(TAG, "Quid ?");
         boolean createSuccessful = false;
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_REPAS_DATE, repas.getDate().getTimeInMillis());
-        Log.e(TAG, "date successfully created");
         values.put(KEY_REPAS_REPASTYPE, repas.getRepasType().toString());
-        Log.e(TAG, "repastype successfully created");
         values.put(KEY_REPAS_CO2_EQUIVALENT, repas.getCo2Equivalent());
-        Log.e(TAG, "CO2Equivalent successfully created");
-
         createSuccessful = db.insert(DATABASE_TABLE_REPAS, null, values) > 0;
-        db.close();
-        if (createSuccessful) {
-            Log.e(TAG, "repas successfully created");
+
+        for (ItemRepas itemRepas:repas.getElements()
+             ) {
+            addItemRepas(itemRepas);
         }
+        db.close();
         return createSuccessful;
     }
 
@@ -928,7 +925,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Deleting single contact
     public void deleteRepas(Repas repas) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
+        db.delete(DATABASE_TABLE_REPAS, KEY_REPAS_ROWID + " = ?",
                 new String[]{String.valueOf(repas.getId())});
         for (ItemRepas itemRepas:repas.getElements()
              ) {
@@ -936,8 +933,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     new String[]{String.valueOf(repas.getId())});
         }
         db.close();
-
-        //À implémenter la suppression des repastype lié
     }
 
     // Getting items Count
@@ -964,8 +959,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param poids : weigth of the item in the meal
      * @return true if the relation was added, or if it already exist
      */
-    public boolean addItemRepasRelation(int item_id, int repas_id, double poids) {
+    public boolean addItemRepas(int item_id, int repas_id, double poids) {
         boolean success = true;
+        if (!checkIfItemRepasExists(repas_id,item_id)) {
+
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ITEM_REPAS_ITEM_ID, item_id);
+            values.put(KEY_ITEM_REPAS_REPAS_ID, repas_id);
+            values.put(KEY_ITEM_REPAS_POIDS, poids);
+
+            success = db.insert(DATABASE_TABLE_ITEM_REPAS, null, values) > 0;
+        }
+        else {
+            Toast.makeText(context,R.string.item_repas_already_on_db,Toast.LENGTH_LONG).show();
+        }
+        return success;
+
+    }
+
+    public boolean addItemRepas(ItemRepas itemRepas) {
+        boolean success = true;
+        int repas_id = itemRepas.getRepas().getId();
+        int item_id = itemRepas.getItem().getId();
+        int poids = itemRepas.getPoids();
         if (!checkIfItemRepasExists(repas_id,item_id)) {
 
 
@@ -991,7 +1009,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Integer> getItemRepasListFromRepasId(int repas_id) {
         List<Integer> idList = new ArrayList<>();
         String selectQuery = "SELECT " + KEY_ITEM_REPAS_ROWID + " FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
-                + KEY_ITEM_REPAS_REPAS_ID + " = '" + getItem(repas_id).getId() + "'";
+                + KEY_ITEM_REPAS_REPAS_ID + " = '" + repas_id + "'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

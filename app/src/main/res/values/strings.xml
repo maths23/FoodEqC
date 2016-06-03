@@ -118,5 +118,9 @@
     <string name="type_with_two_points">Type :</string>
     <string name="date_with_two_points">Date :</string>
     <string name="CO2_equivalent_with_two_points">CO2 Equivalent :</string>
+    <string name="delete">Delete</string>
+    <string name="alertDialogDeleteRepas">Do you really want to delete this meal ?</string>
+    <string name="meal">Meal</string>
+    <string name="deleted">deleted</string>
 
 </resources>

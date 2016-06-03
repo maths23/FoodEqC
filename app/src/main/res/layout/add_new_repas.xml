@@ -78,7 +78,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:id="@+id/editTextAddRepasType" />
+                android:id="@+id/editTextAddRepasItem" />
 
         </LinearLayout>
 
@@ -111,7 +111,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addRepasItem"
-            android:layout_gravity="right" />
+            android:layout_gravity="right"
+            android:id="@+id/buttonRepasAddItem"/>
 
     </LinearLayout>
 <LinearLayout
