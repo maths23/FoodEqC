@@ -267,7 +267,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selectQuery;
         switch (type){
             case base:
-                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
                         + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
                 // looping through all rows and adding to list
                 Cursor cursor = db.rawQuery(selectQuery,null);
@@ -282,7 +282,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.close();
                 break;
             case local:
-               selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
                         + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
                 // looping through all rows and adding to list
                 cursor = db.rawQuery(selectQuery,null);
@@ -763,6 +763,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // ------------------------------- "repas" Table Methods --------------------------------- //
 
+
+
+    /**
+     * Get the last id of repas table
+     *
+     * DANGER : crash dès qu'on met un "'" dans le nom ^^
+     */
+    public int lastIdRepas() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "";
+        sql += "SELECT " + KEY_REPAS_ROWID;
+        sql+= " FROM " + DATABASE_TABLE_REPAS;
+        sql += " ORDER BY " + KEY_REPAS_ROWID + " DESC";
+        sql+= " limit 1";
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
+        int result = cursor.getInt(0);
+        db.close();
+        return result;
+    }
+
     /**
      * Adding new repas
      *
@@ -781,8 +806,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         createSuccessful = db.insert(DATABASE_TABLE_REPAS, null, values) > 0;
 
         for (ItemRepas itemRepas:repas.getElements()
-             ) {
-            addItemRepas(itemRepas);
+                ) {
+            addItemRepas(itemRepas, lastIdRepas());
         }
         db.close();
         return createSuccessful;
@@ -825,17 +850,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
         //On charge la liste d'item
-        ArrayList<ItemRepas> elements = new ArrayList<>();
-        for (Integer item_repas_id:getItemRepasListFromRepasId(id)) {
-            elements.add(getItemRepasFromId(item_repas_id));
-        }
+        ArrayList<ItemRepas> elements = getItemRepasListFromRepasId(id);
 
         //On charge la date
         GregorianCalendar date = new GregorianCalendar();
         date.setTimeInMillis(cursor.getLong(1));
 
-        return new Repas(cursor.getInt(0),date, RepasType.stringToRepasType(cursor.getString(2)),elements,cursor.getDouble(3));
-
+        Repas repas = new Repas(cursor.getInt(0),date, RepasType.stringToRepasType(cursor.getString(2)),elements,cursor.getDouble(3));
+        db.close();
+        return repas;
     }
 
     public List<Repas> getAllRepasByRepasType(RepasType type){
@@ -887,25 +910,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //updating ingredients relationship
 
         //checking if any local item has been removed from the ingredients list
-        List<Integer> newBaseItemIds = new ArrayList<>();
+        List<Integer> baseItemRepasId = new ArrayList<>();
+        List<ItemRepas> newItemRepasList = new ArrayList<>();
         for (ItemRepas itemRepas : repas.getElements()){
-            newBaseItemIds.add(itemRepas.getItem().getId());
+            if (itemRepas.getId() <0) {
+                newItemRepasList.add(itemRepas);
+            }
+            else {
+                baseItemRepasId.add(itemRepas.getId());
+            }
         }
-        List<Integer> formerItemRepasIds = getItemRepasListFromRepasId(repas.getId());
+        //Suppression des item repas qui ne sont plus présent dans la liste de repas
+        List<Integer> formerItemRepasIds = getItemRepasListIdFromRepasId(repas.getId());
+        Log.e(TAG, "base "+baseItemRepasId.toString());
+        Log.e(TAG, "new "+ newItemRepasList.toString());
+        Log.e(TAG, "former " + formerItemRepasIds.toString());
         for (int id:formerItemRepasIds) {
-            if (!newBaseItemIds.contains(getItemRepasFromId(id).getItem().getId())){
+            if (!baseItemRepasId.contains(id)){
+                Log.e(TAG, id + " has been deleted ");
+
                 deleteItemRepas(id);
+
             }
         }
 
         //adding new ingredients or updating already existing ones.
+
+
         for (ItemRepas itemRepas : repas.getElements()) {
             ContentValues valuesItemRepas = new ContentValues();
             int itemId = itemRepas.getItem().getId();
             valuesItemRepas.put(KEY_ITEM_REPAS_ITEM_ID, itemId);
             valuesItemRepas.put(KEY_ITEM_REPAS_REPAS_ID, repas.getId());
             valuesItemRepas.put(KEY_ITEM_REPAS_POIDS, itemRepas.getPoids());
-            if (checkIfItemRepasExists(itemRepas.getRepas().getId(),itemRepas.getItem().getId())) {
+            if (checkIfItemRepasExists(repas.getId(),itemRepas.getItem().getId())) {
                 db.update(DATABASE_TABLE_ITEM_REPAS, valuesItemRepas, KEY_INGREDIENT_ROWID + " = ?",
                         new String[]{String.valueOf(itemRepas.getId())});
             } else {
@@ -917,7 +955,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         // updating row
-        return db.update(DATABASE_TABLE_ITEM, values, KEY_ITEMS_ROWID + " = ?",
+        return db.update(DATABASE_TABLE_REPAS, values, KEY_ITEMS_ROWID + " = ?",
                 new String[]{String.valueOf(repas.getId())});
     }
 
@@ -928,7 +966,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(DATABASE_TABLE_REPAS, KEY_REPAS_ROWID + " = ?",
                 new String[]{String.valueOf(repas.getId())});
         for (ItemRepas itemRepas:repas.getElements()
-             ) {
+                ) {
             db.delete(DATABASE_TABLE_ITEM_REPAS,KEY_ITEM_REPAS_ROWID + " = ?",
                     new String[]{String.valueOf(repas.getId())});
         }
@@ -979,25 +1017,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public boolean addItemRepas(ItemRepas itemRepas) {
+    public boolean addItemRepas(ItemRepas itemRepas, int repas_id) {
         boolean success = true;
-        int repas_id = itemRepas.getRepas().getId();
         int item_id = itemRepas.getItem().getId();
         int poids = itemRepas.getPoids();
-        if (!checkIfItemRepasExists(repas_id,item_id)) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_ITEM_REPAS_ITEM_ID, item_id);
+        values.put(KEY_ITEM_REPAS_REPAS_ID, repas_id);
+        values.put(KEY_ITEM_REPAS_POIDS, poids);
 
-
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(KEY_ITEM_REPAS_ITEM_ID, item_id);
-            values.put(KEY_ITEM_REPAS_REPAS_ID, repas_id);
-            values.put(KEY_ITEM_REPAS_POIDS, poids);
-
-            success = db.insert(DATABASE_TABLE_ITEM_REPAS, null, values) > 0;
-        }
-        else {
-            Toast.makeText(context,R.string.item_repas_already_on_db,Toast.LENGTH_LONG).show();
-        }
+        success = db.insert(DATABASE_TABLE_ITEM_REPAS, null, values) > 0;
         return success;
 
     }
@@ -1006,7 +1036,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param repas_id
      * @return the list of item repas id from a repas id
      */
-    public List<Integer> getItemRepasListFromRepasId(int repas_id) {
+    public List<Integer> getItemRepasListIdFromRepasId(int repas_id) {
         List<Integer> idList = new ArrayList<>();
         String selectQuery = "SELECT " + KEY_ITEM_REPAS_ROWID + " FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
                 + KEY_ITEM_REPAS_REPAS_ID + " = '" + repas_id + "'";
@@ -1018,6 +1048,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 idList.add(cursor.getInt(0));
+
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        cursor.close();
+        return idList;
+
+    }
+
+    /**
+     * @param repas_id
+     * @return the list of item repas id from a repas id
+     */
+    public ArrayList<ItemRepas> getItemRepasListFromRepasId(int repas_id) {
+        ArrayList<ItemRepas> idList = new ArrayList<>();
+        String selectQuery = "SELECT " + KEY_ITEM_REPAS_ROWID + " FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
+                + KEY_ITEM_REPAS_REPAS_ID + " = '" + repas_id + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                idList.add(getItemRepasFromId(cursor.getInt(0)));
 
             } while (cursor.moveToNext());
         }
@@ -1040,7 +1094,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor != null)
             cursor.moveToFirst();
-        return new ItemRepas(cursor.getInt(0),getRepas(cursor.getInt(1)), getItem(cursor.getInt(2)), cursor.getInt(3));
+        return new ItemRepas(cursor.getInt(0),getItem(cursor.getInt(2)), cursor.getInt(3));
     }
 
 
@@ -1048,7 +1102,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DATABASE_TABLE_ITEM_REPAS, KEY_ITEM_REPAS_ROWID + " = ?",
                 new String[]{String.valueOf(item_repas_id)});
-        db.close();
     }
     /**
      * check if an ingredient-relation between an item and a composedItem exists
@@ -1073,7 +1126,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return recordExists;
     }
 

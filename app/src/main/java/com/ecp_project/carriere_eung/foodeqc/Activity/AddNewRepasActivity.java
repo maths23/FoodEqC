@@ -16,8 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
-import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
-import com.ecp_project.carriere_eung.foodeqc.CustomAutoCompleteTextChangedListener;
+import com.ecp_project.carriere_eung.foodeqc.AddRepasCustomAutoCompleteTextChangedListener;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
@@ -29,7 +28,6 @@ import com.ecp_project.carriere_eung.foodeqc.R;
 import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
 
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 
 /**
  * Created by eung on 21/05/16.
@@ -43,7 +41,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
 
     final GregorianCalendar c = new GregorianCalendar();
     ItemRepasAdapter adapter;
-    ArrayAdapter<String> myAdapter;
+    public ArrayAdapter<String> myAdapter;
     public String[] item = new String[] {"Please search..."};
 
     RepasType repasType;
@@ -56,7 +54,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
     TextView tvRepasType;
 
 
-    CustomAutoCompleteView myAutoComplete;
+    public CustomAutoCompleteView myAutoComplete;
     EditText editTextAddRepasItem;
     EditText editTextAddRepasTypeWeight;
     ListView listViewRepasItem;
@@ -97,7 +95,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
         editTextAddRepasItem = (EditText) findViewById(R.id.editTextAddRepasItem);
 
         myAutoComplete = (CustomAutoCompleteView)findViewById(R.id.editTextAddRepasItem);
-        myAutoComplete.addTextChangedListener(new CustomAutoCompleteTextChangedListener(this));
+        myAutoComplete.addTextChangedListener(new AddRepasCustomAutoCompleteTextChangedListener(this));
         myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,item);
         myAutoComplete.setAdapter(myAdapter);
 
@@ -192,10 +190,11 @@ public class AddNewRepasActivity extends AppCompatActivity {
                 } else{
                     int poids = Integer.parseInt(editTextAddRepasTypeWeight.getText().toString());
                     Item item = db.getItem(itemName);
-                    ItemRepas itemRepas = new ItemRepas(repas,item,poids);
+                    ItemRepas itemRepas = new ItemRepas(item,poids);
                     repas.addElement(itemRepas);
                     listViewRepasItem.setAdapter(adapter);
                     editTextAddRepasItem.setText("");
+                    editTextAddRepasTypeWeight.setText("");
 
                 }
             }
@@ -241,17 +240,17 @@ public class AddNewRepasActivity extends AppCompatActivity {
         Item item10 = new Item("Item 10",10, ItemType.base);
         Item item11 = new Item("Item 11",10, ItemType.base);
 
-        ItemRepas itemRepas1 = new ItemRepas(repas,item1,100);
-        ItemRepas itemRepas2 = new ItemRepas(repas,item2,100);
-        ItemRepas itemRepas3 = new ItemRepas(repas,item3,100);
-        ItemRepas itemRepas4 = new ItemRepas(repas,item4,100);
-        ItemRepas itemRepas5 = new ItemRepas(repas,item5,100);
-        ItemRepas itemRepas6 = new ItemRepas(repas,item6,100);
-        ItemRepas itemRepas7 = new ItemRepas(repas,item7,100);
-        ItemRepas itemRepas8 = new ItemRepas(repas,item8,100);
-        ItemRepas itemRepas9 = new ItemRepas(repas,item9,100);
-        ItemRepas itemRepas10 = new ItemRepas(repas,item10,100);
-        ItemRepas itemRepas11 = new ItemRepas(repas,item11,100);
+        ItemRepas itemRepas1 = new ItemRepas(item1,100);
+        ItemRepas itemRepas2 = new ItemRepas(item2,100);
+        ItemRepas itemRepas3 = new ItemRepas(item3,100);
+        ItemRepas itemRepas4 = new ItemRepas(item4,100);
+        ItemRepas itemRepas5 = new ItemRepas(item5,100);
+        ItemRepas itemRepas6 = new ItemRepas(item6,100);
+        ItemRepas itemRepas7 = new ItemRepas(item7,100);
+        ItemRepas itemRepas8 = new ItemRepas(item8,100);
+        ItemRepas itemRepas9 = new ItemRepas(item9,100);
+        ItemRepas itemRepas10 = new ItemRepas(item10,100);
+        ItemRepas itemRepas11 = new ItemRepas(item11,100);
 
         repas.addElement(itemRepas1);
         repas.addElement(itemRepas2);
