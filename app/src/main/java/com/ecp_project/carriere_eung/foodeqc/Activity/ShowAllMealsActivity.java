@@ -40,7 +40,6 @@ public class ShowAllMealsActivity extends AppCompatActivity {
         setContentView(R.layout.show_all_meals);
 
         db = new DatabaseHandler(getApplication());
-        initialiseDatabase();
 
         listMeals = db.getAllRepas();
         lvMeals = (ListView)findViewById(R.id.listViewMeals);

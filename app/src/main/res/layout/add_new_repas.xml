@@ -74,7 +74,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:textColor="@color/black" />
 
-            <EditText
+            <com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
