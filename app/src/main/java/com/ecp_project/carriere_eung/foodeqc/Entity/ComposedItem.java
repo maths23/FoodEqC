@@ -3,7 +3,10 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
 import android.util.Log;
 
 import java.util.ArrayList;
+
+import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
+import com.ecp_project.carriere_eung.foodeqc.R;
 
 /**
  * Created by Matthieu on 19/05/2016.
@@ -90,4 +93,6 @@ public class ComposedItem extends Item{
     public void setCost(ProcessingCost cost) {
         this.cost = cost;
     }
+
+
 }

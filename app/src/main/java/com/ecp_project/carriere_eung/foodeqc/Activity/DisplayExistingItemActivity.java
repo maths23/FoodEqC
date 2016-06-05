@@ -1,9 +1,14 @@
 package com.ecp_project.carriere_eung.foodeqc.Activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +18,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.DisplayItemComplete;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
@@ -35,6 +41,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
     final String TAG_EQUIVALENT = "equivalent";
     final String TAG_ID = "id";
     ArrayList<HashMap<String,String>> itemList;
+    ArrayList<String> types = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +62,45 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         lvItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("DisplayEI, on click","test");
-                Log.e("DisplayEI, on click",""+itemList.get(position).get(TAG_ID));
                 Intent intent = new Intent(getApplicationContext(),DisplayItemComplete.class);
                 int item_id = db.getItem(Integer.parseInt(itemList.get(position).get(TAG_ID))).getId();
                 intent.putExtra("item_id",item_id);
                 startActivity(intent);
             }
         });
+        lvItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                String itemName = itemList.get(position).get(TAG_IIEM);
+                AlertDialog.Builder builder = new AlertDialog.Builder(DisplayExistingItemActivity.this);
+                builder.setTitle(itemName);
+                builder.setMessage(getString(R.string.alertDialogDeleteItemRepas)  );
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.deleteItem(Integer.parseInt(itemList.get(position).get(TAG_ID)));
+                        int position = spinner.getSelectedItemPosition();
+                        updateItemList(position);
+                        lvItem.setAdapter(adapter);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                return true;
+            }
+        });
 
 
         spinner = (Spinner)findViewById(R.id.spinnerChooseItemType);
-        final ArrayList<String> types = new ArrayList<>();
+        types = new ArrayList<>();
         String[]types_bis = getResources().getStringArray(R.array.item_type);
         for(String type:types_bis){
             types.add(type);
@@ -76,19 +110,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0)
-                   itemList = harvestItems();
-                else {
-                    Log.e("DisplayActivity",""+types.get(position));
-                    itemList = harvestItems(ItemType.toItemType(types.get(position).toLowerCase()));
-                }
-                adapter = new SimpleAdapter(
-                        DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
-                        new int[]{R.id.textViewDisplayItemName, R.id.textViewDisplayItemEquivalent});
-                lvItem.setAdapter(adapter);
-
-
-
+                updateItemList(position);
             }
 
             @Override
@@ -99,6 +121,19 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void updateItemList(int position){
+        if (position == 0)
+            itemList = harvestItems();
+        else {
+            Log.e("DisplayActivity",""+types.get(position));
+            itemList = harvestItems(ItemType.toItemType(types.get(position).toLowerCase()));
+        }
+        adapter = new SimpleAdapter(
+                DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
+                new int[]{R.id.textViewDisplayItemName, R.id.textViewDisplayItemEquivalent});
+        lvItem.setAdapter(adapter);
     }
 
     /**
@@ -143,5 +178,18 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         }
         db.close();
         return  itemList;
+    }
+
+    //menu handling
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_test, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return MenuHandler.HandleMenuEvents(item,getApplicationContext(),this);
     }
 }

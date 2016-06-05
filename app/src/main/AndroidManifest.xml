@@ -33,6 +33,10 @@
         <activity android:name=".Activity.ShowAllMealsActivity">
 
         </activity>
+        <activity android:name=".Activity.AddNewItemTypeActivity"></activity>
+        <activity android:name=".Activity.AddNewItemKnownActivity">
+
+        </activity>
 
     </application>
 

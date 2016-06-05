@@ -3,9 +3,13 @@ package com.ecp_project.carriere_eung.foodeqc.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
@@ -64,5 +68,19 @@ public class AddNewRepasTypeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+    }
+    //menu handling
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_test, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return MenuHandler.HandleMenuEvents(item,getApplicationContext(),this);
     }
 }

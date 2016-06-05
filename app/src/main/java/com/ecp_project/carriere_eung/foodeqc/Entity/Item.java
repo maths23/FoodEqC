@@ -1,6 +1,8 @@
 package com.ecp_project.carriere_eung.foodeqc.Entity;
 
 
+import android.content.Context;
+
 import com.ecp_project.carriere_eung.foodeqc.R;
 
 /**
@@ -62,8 +64,8 @@ public class Item {
         return type;
     }
 
-    @Override
-    public String toString() {
-        return name + R.string.itemToString1 + co2Equivalent + R.string.itemToString2 + type.toString();
+
+    public String toString(Context context) {
+        return name + context.getString(R.string.itemToString1)+ " " + co2Equivalent + context.getString(R.string.itemToString2)+ " " + type.toString();
     }
 }
