@@ -101,7 +101,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
         myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,item);
         myAutoComplete.setAdapter(myAdapter);
 
-
+ç
         listViewRepasItem = (ListView)findViewById(R.id.listViewRepasItem);
         initializeAdapter();
         listViewRepasItem.setAdapter(adapter);
