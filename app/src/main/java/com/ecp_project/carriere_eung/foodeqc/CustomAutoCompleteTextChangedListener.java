@@ -15,10 +15,9 @@ public class CustomAutoCompleteTextChangedListener implements TextWatcher {
 
     public static final String TAG = "CustomAutoCompleteTextChangedListener.java";
     Context context;
+    Boolean baseOnly;
 
-    public CustomAutoCompleteTextChangedListener(Context context){
-        this.context = context;
-    }
+    public CustomAutoCompleteTextChangedListener(Context context){this.context = context;}
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -30,7 +29,8 @@ public class CustomAutoCompleteTextChangedListener implements TextWatcher {
         Log.e("Input","User input: "+ userInput);
         AddNewItemActivity addNewItemActivity = ((AddNewItemActivity) context);
 
-        addNewItemActivity.item = addNewItemActivity.db.getItemsFromDb(userInput.toString());
+        //only base items can be added to composedItem, hence second paramter must be true
+        addNewItemActivity.item = addNewItemActivity.db.getItemsFromDb(userInput.toString(),true);
 
 
         // update the adapater

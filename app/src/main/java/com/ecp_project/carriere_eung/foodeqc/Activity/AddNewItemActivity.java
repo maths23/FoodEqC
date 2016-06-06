@@ -211,7 +211,10 @@ public class AddNewItemActivity extends AppCompatActivity  {
                     Toast.makeText(getApplicationContext(), R.string.no_name_entered, Toast.LENGTH_LONG).show();
                 } else if (ingredients.size()<=1){
                     Toast.makeText(getApplicationContext(), R.string.not_enough_ingredients, Toast.LENGTH_LONG).show();
-                } else{
+                } else if (total_proportion == 0){
+                    Toast.makeText(getApplicationContext(), R.string.no_proportion_entered, Toast.LENGTH_LONG).show();
+                }
+                else{
                     ComposedItem toBeAdded = new ComposedItem(itemName,ItemType.local,ingredients);
                     boolean succes = db.addItem(toBeAdded);
                     if(succes) {

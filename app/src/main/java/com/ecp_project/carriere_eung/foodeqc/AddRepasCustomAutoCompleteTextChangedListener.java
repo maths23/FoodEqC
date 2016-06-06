@@ -30,7 +30,8 @@ public class AddRepasCustomAutoCompleteTextChangedListener implements TextWatche
         Log.e("Input","User input: "+ userInput);
         AddNewRepasActivity addNewRepasActivity = ((AddNewRepasActivity) context);
 
-        addNewRepasActivity.item = addNewRepasActivity.db.getItemsFromDb(userInput.toString());
+        //all items can be added to Repas, hence second paramter must be false
+        addNewRepasActivity.item = addNewRepasActivity.db.getItemsFromDb(userInput.toString(),false);
 
 
         // update the adapater
