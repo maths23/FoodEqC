@@ -156,5 +156,9 @@
     <string name="alertDialogDeleteRepas">Do you really want to delete this meal ?</string>
     <string name="meal">Meal</string>
     <string name="deleted">deleted</string>
+    <string name="statistics">Statistics</string>
+    <string name="set_number_days_for_graph_stats">Number of days shown in the graph</string>
+    <string name="last_5_days_emission">Last 5 days emissions</string>
+    <string name="emission_per_day_average">Emission per day average : </string>
 
 </resources>

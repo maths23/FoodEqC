@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     Button createRepas;
     Button showItems;
     Button showMeals;
+    Button statistics;
     DatabaseHandler db;
 
     @Override
@@ -67,13 +68,27 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        showMeals = (Button)findViewById(R.id.buttonShowMeals);
+        showMeals.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ShowAllMealsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        statistics = (Button)findViewById(R.id.buttonStatistics);
+        statistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),StatisticsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(AddNewRepasActivity.EXTRA_MESSAGE);
-        if (message == null) {
-            Toast.makeText(MainActivity.this,"Pas d'extras dans l'intent",Toast.LENGTH_LONG).show();
-        }
-        else {
+        if (message != null) {
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
 
         }

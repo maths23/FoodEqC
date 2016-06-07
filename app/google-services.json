@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "355738636434",
+    "firebase_url": "https://foodeqc.firebaseio.com",
+    "project_id": "foodeqc",
+    "storage_bucket": "foodeqc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355738636434:android:53e009b8ce50d9e9",
+        "android_client_info": {
+          "package_name": "com.ecp_project.carriere_eung.foodeqc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "355738636434-pieji0mhi07efq7t6l8hvb4po2rl6umr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecp_project.carriere_eung.foodeqc",
+            "certificate_hash": "47925225CAA8E9033EB69C1A0CBB60D83DE31864"
+          }
+        },
+        {
+          "client_id": "355738636434-2kj1npei8ba012kh9viipd31h0f3fmfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK6BXWfe9ZZIHCzHLvRkLDRYSznwjIw0o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "355738636434-2kj1npei8ba012kh9viipd31h0f3fmfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

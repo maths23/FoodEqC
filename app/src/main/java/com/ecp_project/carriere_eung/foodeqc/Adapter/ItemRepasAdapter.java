@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -27,6 +29,7 @@ public class ItemRepasAdapter extends ArrayAdapter<ItemRepas> {
     public class ItemRepasViewHolder {
         public TextView textViewItemName;
         public TextView textViewItemWeight;
+        public TextView textViewItemCO2Equivalent;
 
     }
 
@@ -41,6 +44,7 @@ public class ItemRepasAdapter extends ArrayAdapter<ItemRepas> {
             viewHolder = new ItemRepasViewHolder();
             viewHolder.textViewItemName = (TextView) convertView.findViewById(R.id.textViewRepasItemName);
             viewHolder.textViewItemWeight = (TextView) convertView.findViewById(R.id.textViewRepasItemWeight);
+            viewHolder.textViewItemCO2Equivalent = (TextView) convertView.findViewById(R.id.textViewDisplayItemRepasCO2Equivalent);
             convertView.setTag(viewHolder);
         }
 //getItem(position) va récupérer l'item [position] de la List<Tweet> tweets
@@ -48,6 +52,7 @@ public class ItemRepasAdapter extends ArrayAdapter<ItemRepas> {
         //il ne reste plus qu'à remplir notre vue
         viewHolder.textViewItemName.setText(itemRepas.getItem().getName());
         viewHolder.textViewItemWeight.setText(Integer.toString(itemRepas.getPoids())+" g");
+        viewHolder.textViewItemCO2Equivalent.setText(Double.toString(itemRepas.getCo2Equivalent()) + " g eqC");
 
         return convertView;
     }

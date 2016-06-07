@@ -20,6 +20,7 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -842,7 +843,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_REPAS_REPASTYPE, repas.getRepasType().toString());
         values.put(KEY_REPAS_CO2_EQUIVALENT, repas.getCo2Equivalent());
         createSuccessful = db.insert(DATABASE_TABLE_REPAS, null, values) > 0;
-
+        Log.e(TAG,"Added meal at time " + repas.getDate().getTimeInMillis());
         for (ItemRepas itemRepas:repas.getElements()
                 ) {
             addItemRepas(itemRepas, lastIdRepas());
@@ -1025,6 +1026,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    public List<Repas> getLastDaysRepas(int number_of_days) {
+        List<Repas> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery;
+        GregorianCalendar c = new GregorianCalendar();
+        c.clear(Calendar.HOUR_OF_DAY);
+        c.clear(Calendar.MINUTE);
+        c.clear(Calendar.SECOND);
+        c.clear(Calendar.MILLISECOND);
+
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+        long indicator = c.getTimeInMillis() - (1000*60*60*24*number_of_days);
+        Log.e(TAG,"Indicator :" + indicator);
+
+        selectQuery = "SELECT * FROM " + DATABASE_TABLE_REPAS + " WHERE "
+                + KEY_REPAS_DATE + " > '" + String.valueOf(indicator) +"'" +
+                " ORDER BY " + KEY_REPAS_DATE + " DESC";
+        // looping through all rows and adding to list
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst()) {
+            do {
+                Repas repas = getRepas(cursor.getInt(0));
+                // Adding item to list
+                list.add(repas);
+                Log.e(TAG,"Loaded meal id #" + repas.getId());
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        db.close();
+
+        return list;
+    }
     // ------------------------------- "item_repas" Table Methods --------------------------------- //
 
     /**

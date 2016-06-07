@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/last_5_days_emission"
+            android:id="@+id/textView8"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change"
+            android:id="@+id/buttonChangeGraphNumberOfDaysStats"
+            android:layout_gravity="center_vertical|end"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            />
+
+
+    </RelativeLayout>
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:id="@+id/graphLast7Days"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/emission_per_day_average"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewStatisticEmissionPerDayAverage"
+            android:text="Average"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

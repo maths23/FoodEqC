@@ -31,6 +31,7 @@ import com.ecp_project.carriere_eung.foodeqc.Exception.ItemNotFoundException;
 import com.ecp_project.carriere_eung.foodeqc.R;
 import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -53,7 +54,10 @@ public class AddNewRepasActivity extends AppCompatActivity {
     Repas repas;
     boolean newMeal;
 
+
+
     public DatabaseHandler db;
+
 
     TextView tvCurrentDate;
     TextView tvRepasType;
@@ -65,7 +69,6 @@ public class AddNewRepasActivity extends AppCompatActivity {
     ListView listViewRepasItem;
     Button btnAddRepasItem;
     Button btnSave;
-
 
 
     @Override
@@ -91,7 +94,7 @@ public class AddNewRepasActivity extends AppCompatActivity {
 
 
         tvCurrentDate = (TextView)findViewById(R.id.tvCurrentDate);
-        tvCurrentDate.setText(new StringBuilder().append("Le ").append(c.get(GregorianCalendar.DAY_OF_MONTH)).append("/").append(c.get(GregorianCalendar.MONTH) + 1).append("/").append(c.get(GregorianCalendar.YEAR)).append(" à ").append(c.get(GregorianCalendar.HOUR) + c.get(GregorianCalendar.AM_PM)).append(":").append(c.get(GregorianCalendar.MINUTE)));
+        tvCurrentDate.setText(new StringBuilder().append("Le ").append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH))).append("/").append(String.format("%02d",c.get(Calendar.MONTH)+1)).append("/").append(c.get(GregorianCalendar.YEAR)).append(" à ").append(c.get(GregorianCalendar.HOUR_OF_DAY)).append(":").append(c.get(GregorianCalendar.MINUTE)));
 
         tvRepasType = (TextView)findViewById(R.id.tvRepasType);
         tvRepasType.setText(stringRepasType(repasType));

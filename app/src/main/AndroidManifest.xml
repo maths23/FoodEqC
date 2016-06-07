@@ -38,6 +38,10 @@
 
         </activity>
 
+        <activity android:name=".Activity.StatisticsActivity">
+
+        </activity>
+
     </application>
 
 </manifest>
