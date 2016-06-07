@@ -125,13 +125,17 @@ public class AddNewItemActivity extends AppCompatActivity  {
                 } else if (!db.checksIfItemNameExists(ingredientName)) {
                     Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
                 } else{
+                    if (db.getItem(ingredientName) instanceof ComposedItem ){
+                        Toast.makeText(getApplication(),R.string.no_composed_item_can_be_input,Toast.LENGTH_LONG).show();
+                    } else{
+                        HashMap<String, String> ingredient = new HashMap<String, String>();
+                        ingredient.put(TAG_INGREDIENT, ingredientName);
+                        ingredient.put(TAG_PROPORTION, "0");
+                        ingredientList.add(ingredient);
+                        lvIngredients.setAdapter(adapter);
+                        ingredientText.setText("");
+                    }
 
-                    HashMap<String, String> ingredient = new HashMap<String, String>();
-                    ingredient.put(TAG_INGREDIENT, ingredientName);
-                    ingredient.put(TAG_PROPORTION, "0");
-                    ingredientList.add(ingredient);
-                    lvIngredients.setAdapter(adapter);
-                    ingredientText.setText("");
 
                 }
 

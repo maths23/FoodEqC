@@ -30,6 +30,7 @@
     //AddNewItemActivity
     <string name="not_enough_ingredients">Please enter at least 2 ingredients</string>
     <string name="no_proportion_entered">Please enter proportions by clicking on the item</string>
+    <string name="no_composed_item_can_be_input">This item is composed of other items. Only base item (which are not composed) can be added</string>
 
     <string name="app_name">FoodEqC</string>
     <string name="new_composedItem_name">Item name</string>
