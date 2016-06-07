@@ -1,6 +1,6 @@
 package com.ecp_project.carriere_eung.foodeqc.Activity;
 
-import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -10,39 +10,37 @@ import android.view.View;
 import android.widget.Button;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
-import com.ecp_project.carriere_eung.foodeqc.ConfirmDialogFragment;
-import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
 /**
- * Created by Matthieu on 02/06/2016.
+ * Created by Matthieu on 05/06/2016.
  */
-public class SettingsActivity extends AppCompatActivity implements ConfirmDialogFragment.ConfirmProportionDialogListener {
-    DatabaseHandler db;
-    Button restaure;
+public class AddNewItemTypeActivity extends AppCompatActivity {
+
+    Button buttonKnown;
+    Button buttonUnknown;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_new_item);
-        restaure = (Button)findViewById(R.id.buttonRestaure);
-        restaure.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.add_new_item_type);
+
+        buttonKnown = (Button)findViewById(R.id.buttonCreateItemTypeKnown);
+        buttonUnknown = (Button)findViewById(R.id.buttonCreateItemTypeUnknown);
+
+        buttonKnown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getApplicationContext(),AddNewItemKnownActivity.class);
+                startActivity(intent);
             }
         });
-
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        db =new DatabaseHandler(getApplication());
-        db.restaureBaseDatabase();
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-
+        buttonUnknown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),AddNewItemActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //menu handling

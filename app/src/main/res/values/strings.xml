@@ -1,4 +1,37 @@
 <resources>
+
+    //menu description
+    <string name="menu_main">Main screen</string>
+    <string name="menu_add_meal">Add a meal</string>
+    <string name="menu_history">Show history</string>
+    <string name="menu_show_item">Show all items</string>
+    <string name="menu_create_item">Create an item</string>
+
+    //AddNewRepasActivity
+    <string name="no_weight_entered">Please enter a weight</string>
+
+    //AlertDialog if new item on AddNewRepasActivity
+    <string name="title_add_new_item_alert">Add an item ?</string>
+    <string name="message_add_new_item_alert">There is no matching item in the database. Do you want to create it now ?</string>
+    <string name="message_dialog_known">Do you know the CO2 equivalent of your item ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    //AddNewItemTypeActivity
+    <string name="title_create_item">Create a new item</string>
+    <string name="known_equivalent">I know the CO2 equivalent of my item</string>
+    <string name="unknown_equivalent">I do not know the equivalent</string>
+
+    //AddNewItemKnownActivity
+    <string name="add_new_item_kown_equivalent">Item  CO2 equivalent (g of C02/100g) : </string>
+    <string name="no_name_entered">Please enter a name</string>
+    <string name="no_equivalent_entered">Please enter an equivalent</string>
+
+    //AddNewItemActivity
+    <string name="not_enough_ingredients">Please enter at least 2 ingredients</string>
+    <string name="no_proportion_entered">Please enter proportions by clicking on the item</string>
+    <string name="no_composed_item_can_be_input">This item is composed of other items. Only base item (which are not composed) can be added</string>
+
     <string name="app_name">FoodEqC</string>
     <string name="new_composedItem_name">Item name</string>
     <string name="new_composedItem_add_ingredient">Choose an Ingredient</string>
@@ -35,6 +68,7 @@
     <string name="item_repas_deleted">: item deleted !</string>
     <string name="set_weight_title">Set item weight</string>
     <string name="item_repas_weigth_set">\'s weigth set to</string>
+
 
     <string name="ingredient">Ingredient</string>
     <string name="proportion">Proportion</string>

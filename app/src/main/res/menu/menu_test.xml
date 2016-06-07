@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_main"
+        android:title="@string/menu_main">    </item>
+    <item android:id="@+id/menu_new_meal"
+        android:title="@string/menu_add_meal">
+    </item>
+    <item android:title="@string/menu_history"
+        android:id="@+id/menu_history"></item>
+    <item android:title="@string/menu_show_item"
+        android:id="@+id/menu_show_item"></item>
+    <item android:title="@string/menu_create_item"
+        android:id="@+id/menu_create_item"></item>
+</menu>

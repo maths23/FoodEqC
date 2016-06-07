@@ -189,13 +189,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 }
             }
             createSuccessful = db.insert(DATABASE_TABLE_ITEM, null, values) > 0;
-            db.close();
+
             if (createSuccessful) {
                 Log.e(TAG, item.getName() + " created.");
             }
         } else {
-            //à remettre dès que prb résolu !
-            //Toast.makeText(context,R.string.item_alreaydy_on_db,Toast.LENGTH_LONG).show();
+
+            Toast.makeText(context,R.string.item_alreaydy_on_db,Toast.LENGTH_LONG).show();
         }
 
         return createSuccessful && createRelationSuccessful;
@@ -228,36 +228,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         // return contact list
-        db.close();
+
         return itemList;
     }
 
+    /**
+     *
+     * @param id
+     * @return the item/composedItem matching the id if there is one, null if there is none.
+     */
     public Item getItem(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(DATABASE_TABLE_ITEM, new String[]{KEY_ITEMS_ROWID, KEY_ITEMS_NAME,
                         KEY_ITEMS_CO2_EQUIVALENT, KEY_ITEMS_TYPE}, KEY_ITEMS_ROWID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null){
             cursor.moveToFirst();
-        Log.e("DBHandler",""+cursor.getCount());
-        String itemName = cursor.getString(1);
+            Log.e("DBHandler",""+cursor.getCount());
+            String itemName = cursor.getString(1);
 
-        if (cursor.getString(3).equals(ItemType.base.toString())) {
-            return new Item(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
-                    cursor.getDouble(2), ItemType.toItemType(cursor.getString(3)));
+            if (cursor.getString(3).equals(ItemType.base.toString())) {
+                return new Item(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
+                        cursor.getDouble(2), ItemType.toItemType(cursor.getString(3)));
+            } else {
+                ArrayList<Ingredient> ingredients = new ArrayList<>();
+                List<Integer> relationId = getIngredientsIdFromName(itemName);
+                for (int value : relationId) {
+                    ingredients.add(getIngredientFromId(value));
+                }
+
+                return new ComposedItem(Integer.parseInt(cursor.getString(0)),cursor.getString(1), ItemType.toItemType(cursor.getString(3)), ingredients,
+                        ProcessingCost.toProcessingCost(cursor.getDouble(2)));
+            }
         } else {
-            ArrayList<Ingredient> ingredients = new ArrayList<>();
-            List<Integer> relationId = getIngredientsIdFromName(itemName);
-            for (int value : relationId) {
-                ingredients.add(getIngredientFromId(value));
-            }
-            if (cursor.getString(1).equals("thon aux carottes")){
-                Log.e("naming", "c'est aussi ça");
-            }
-            return new ComposedItem(Integer.parseInt(cursor.getString(0)),cursor.getString(1), ItemType.toItemType(cursor.getString(3)), ingredients,
-                    ProcessingCost.toProcessingCost(cursor.getDouble(2)));
+            return null;
         }
+
+
 
 
     }
@@ -280,7 +288,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     } while (cursor.moveToNext());
                 }
                 // return contact list
-                db.close();
+
                 break;
             case local:
                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
@@ -294,7 +302,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     } while (cursor.moveToNext());
                 }
                 // return contact list
-                db.close();
+
                 break;
             case imported:
                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
@@ -308,7 +316,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     } while (cursor.moveToNext());
                 }
                 // return contact list
-                db.close();
+
                 break;
 
 
@@ -381,17 +389,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(item.getId())});
     }
 
-    // Deleting single contact
+    /**
+     * Delete an item, base or composed.
+     * Warning : all corresponding itemItem (Ingredient) and ItemRepas relations are deleted
+     * BUT composedItem and repas which contains the deleted item will NOT be deleted
+     * This may lead to 1 or even 0 ingredients composedItems
+     * or 0 item Repas
+     * @param item
+     */
     public void deleteItem(Item item) {
         SQLiteDatabase db = this.getWritableDatabase();
         int id = item.getId();
+
+        //deleting all related ingredients
         if (item instanceof ComposedItem){
             List<Integer> toBeDeleted = getIngredientsIdOfFromID(id);
             for (int idToBeDeleted:toBeDeleted){
                 deleteIngredients(idToBeDeleted);
             }
         } else {
-            List<Integer> toBeDeleted = getIngredientIdUsingItemId(id);
+            List<Integer> toBeDeleted = getIngredientIdUsingBaseItemId(id);
             for (int idToBeDeleted:toBeDeleted){
                 deleteIngredients(idToBeDeleted);
             }
@@ -399,7 +416,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(DATABASE_TABLE_ITEM, KEY_ITEMS_ROWID + " = ?",
                 new String[]{String.valueOf(item.getId())});
 
-        db.close();
+        //deleting all related ItemRepas related
+        List<Integer> itemRepasToBedeleted = getItemRepasIdFromItemId(id);
+        for (int idToBeDeleted:itemRepasToBedeleted){
+            deleteItemRepas(idToBeDeleted);
+        }
+
+    }
+
+    public void deleteItem(int item_id){
+        deleteItem(getItem(item_id));
     }
 
     public void deleteAllItem(){
@@ -430,7 +456,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+
         return recordExists;
     }
 
@@ -469,7 +495,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+
         return returnValue;
     }
 
@@ -478,7 +504,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return getItem(getItemIdFromCompleteName(name));
     }
 
-    public List<Item> queryItemFromName(String name) {
+    /**
+     * Used for autocompleteFeatures
+     * All to get only base Item (to create composed items for instance)
+     * or all items (to create a meal)
+     * @param name
+     * @param baseOnly
+     * @return the list of items whose name matches the one prompted by the user (name parameter)
+     * If baseOnly is true, only Base item will be returned
+     */
+    public List<Item> queryItemFromName(String name,Boolean baseOnly) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         List<Item> items = new ArrayList<Item>();
@@ -487,6 +522,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String sql = "";
         sql += "SELECT * FROM " + DATABASE_TABLE_ITEM;
         sql += " WHERE " + KEY_ITEMS_NAME + " LIKE '%" + name + "%'";
+        if (baseOnly){
+            sql += " AND " + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() +"'";
+        }
         sql += " ORDER BY " + KEY_ITEMS_NAME + " DESC";
         sql += " LIMIT 0,5";
         // execute the query
@@ -507,7 +545,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        //db.close();
 
         return items;
     }
@@ -517,11 +555,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @return a list of items whose name matches searchTerm
      * used for the autocompletion feature
      */
-    public String[] getItemsFromDb(String searchTerm) {
+    public String[] getItemsFromDb(String searchTerm, Boolean baseOnly) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         // add items on the array dynamically
-        List<Item> items = this.queryItemFromName(searchTerm);
+        List<Item> items = this.queryItemFromName(searchTerm, baseOnly);
         int rowCount = items.size();
 
         String[] item = new String[rowCount];
@@ -532,7 +570,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             item[x] = record.getName();
             x++;
         }
-        db.close();
+        //db.close();
         return item;
     }
 
@@ -607,7 +645,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         // return contact list
         cursor.close();
-        db.close();
+        //db.close();
         return idList;
 
     }
@@ -615,7 +653,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      *
      * @param citem_name
-     * @return the list of the ids of the ingredients containing the composedItem
+     * @return the list of the ids of the ingredients composing the composedItem
      */
     public List<Integer> getIngredientsIdFromName(String citem_name) {
         List<Integer> idList = new ArrayList<>();
@@ -634,7 +672,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         // return contact list
         cursor.close();
-        db.close();
+        //db.close();
         return idList;
 
     }
@@ -642,9 +680,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      *
      * @param item_id
-     * @return the list of ids of the ingredients containing the(simple) item which matches the item_id
+     * @return the list of ids of the ingredients containing the (simple) item which matches the item_id
      */
-    public List<Integer> getIngredientIdUsingItemId(int item_id){
+    public List<Integer> getIngredientIdUsingBaseItemId(int item_id){
         List<Integer> idList = new ArrayList<>();
         String selectQuery = "SELECT " + KEY_INGREDIENT_ROWID + " FROM " + DATABASE_TABLE_INGREDIENT_RELATION + " WHERE "
                 + KEY_INGREDIENT_ITEM_ID + " = '" + item_id + "'";
@@ -661,7 +699,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         // return contact list
         cursor.close();
-        db.close();
+        //db.close();
         return idList;
     }
 
@@ -686,7 +724,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DATABASE_TABLE_INGREDIENT_RELATION, KEY_INGREDIENT_ROWID + " = ?",
                 new String[]{String.valueOf(ing.getId())});
-        db.close();
+        //db.close();
     }
 
 
@@ -694,7 +732,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DATABASE_TABLE_INGREDIENT_RELATION, KEY_INGREDIENT_ROWID + " = ?",
                 new String[]{String.valueOf(id)});
-        db.close();
+        //db.close();
     }
     /**
      * check if an ingredient-relation between an item and a composedItem exists
@@ -719,7 +757,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        //db.close();
         return recordExists;
     }
 
@@ -744,7 +782,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_CITEMS_TYPE,item.getType().toString());
 
             createSuccessful = db.insert(DATABASE_TABLE_CITEM, null, values) > 0;
-            db.close();
+            //db.close();
             if(createSuccessful){
                 Log.e(TAG, item.getName() + " created.");
             }
@@ -785,7 +823,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         int result = cursor.getInt(0);
-        db.close();
+        //db.close();
         return result;
     }
 
@@ -810,7 +848,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ) {
             addItemRepas(itemRepas, lastIdRepas());
         }
-        db.close();
+        //db.close();
         return createSuccessful;
     }
 
@@ -836,7 +874,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         // return contact list
-        db.close();
+        //db.close();
         return repasList;
     }
 
@@ -858,7 +896,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         date.setTimeInMillis(cursor.getLong(1));
 
         Repas repas = new Repas(cursor.getInt(0),date, RepasType.stringToRepasType(cursor.getString(2)),elements,cursor.getDouble(3));
-        db.close();
+        //db.close();
         return repas;
     }
 
@@ -879,7 +917,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         // return contact list
-        db.close();
+        //db.close();
 
         return list;
     }
@@ -971,7 +1009,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.delete(DATABASE_TABLE_ITEM_REPAS,KEY_ITEM_REPAS_ROWID + " = ?",
                     new String[]{String.valueOf(repas.getId())});
         }
-        db.close();
+        //db.close();
     }
 
     // Getting items Count
@@ -1113,24 +1151,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         // return contact list
         cursor.close();
-        db.close();
+        //db.close();
         return idList;
 
     }
 
     /**
-     * @param id
-     * @return the ingredient within the database that matches the id
+     * @param item_repas_id
+     * @return the item_repas within the database that matches the id
      */
-    public ItemRepas getItemRepasFromId(int id) {
+    public ItemRepas getItemRepasFromId(int item_repas_id) {
         String selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
-                + KEY_ITEM_REPAS_ROWID + " = '" + id + "'";
+                + KEY_ITEM_REPAS_ROWID + " = '" + item_repas_id + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor != null)
             cursor.moveToFirst();
         return new ItemRepas(cursor.getInt(0),getItem(cursor.getInt(2)), cursor.getInt(3));
+    }
+
+    /**
+     * Used to delete corresponding item_repas objects when deleting an item.
+     * @param item_id
+     * @return the list of the IDs of the item_repas objects that contains the item whose Id matches item_id
+     */
+    public List<Integer>getItemRepasIdFromItemId(int item_id){
+        List<Integer> idList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM_REPAS + " WHERE "
+                + KEY_ITEM_REPAS_ITEM_ID + " = '" + item_id + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                idList.add(cursor.getInt(0));
+
+            } while (cursor.moveToNext());
+        }
+        return idList;
     }
 
 

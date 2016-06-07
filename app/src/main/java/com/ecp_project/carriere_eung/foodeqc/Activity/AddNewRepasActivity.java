@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemRepasAdapter;
 import com.ecp_project.carriere_eung.foodeqc.AddRepasCustomAutoCompleteTextChangedListener;
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
@@ -37,6 +41,7 @@ import java.util.GregorianCalendar;
 public class AddNewRepasActivity extends AppCompatActivity {
 
     private static final int DIALOG_ALERT_DELETE = 100;
+    private static final int CREATE_ITEM_FOR_MEAL = 4566;
     public static final String EXTRA_MESSAGE = "new meal message";
     private ItemRepas temporaryStorageItemRepas;
 
@@ -168,6 +173,8 @@ public class AddNewRepasActivity extends AppCompatActivity {
                         intent.putExtra(EXTRA_MESSAGE,message);
                         startActivity(intent);
                     } else {
+
+
                         Toast.makeText(AddNewRepasActivity.this, "Failed", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -187,27 +194,82 @@ public class AddNewRepasActivity extends AppCompatActivity {
         btnAddRepasItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itemName = editTextAddRepasItem.getText().toString();
+                final String itemName = editTextAddRepasItem.getText().toString();
                 if (!db.checksIfItemNameExists(itemName)) {
+                    //Asking user if he wants to create a new item
+                    AlertDialog.Builder alert = new AlertDialog.Builder(AddNewRepasActivity.this);
+                    alert.setTitle(R.string.title_add_new_item_alert); //Set Alert dialog title here
+                    alert.setMessage(R.string.message_add_new_item_alert);
+                    alert.setPositiveButton(R.string.create_item, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder alert2 = new AlertDialog.Builder(AddNewRepasActivity.this);
+                            alert2.setMessage(R.string.message_dialog_known);
+                            alert2.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getApplicationContext(),AddNewItemKnownActivity.class);
+                                    intent.putExtra("item_name",itemName);
+
+                                    startActivityForResult(intent,CREATE_ITEM_FOR_MEAL);
+                                }
+                            });
+                            alert2.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getApplicationContext(),AddNewItemActivity.class);
+                                    intent.putExtra("item_name",itemName);
+                                    startActivityForResult(intent,CREATE_ITEM_FOR_MEAL);
+                                }
+                            });
+                            alert2.show();
+
+
+
+                        }
+                    });
+                    alert.setNegativeButton(R.string.cancel, new CancelOnClickListener());
+                    alert.show();
                     Toast.makeText(getApplication(),R.string.item_does_not_exist,Toast.LENGTH_LONG).show();
                 } else{
-                    int poids = Integer.parseInt(editTextAddRepasTypeWeight.getText().toString());
-                    Item item = db.getItem(itemName);
-                    ItemRepas itemRepas = new ItemRepas(item,poids);
-                    repas.addElement(itemRepas);
-                    listViewRepasItem.setAdapter(adapter);
-                    editTextAddRepasItem.setText("");
-                    editTextAddRepasTypeWeight.setText("");
+                    if(editTextAddRepasTypeWeight.getText().toString().equals("")){
+                        Toast.makeText(getApplicationContext(),R.string.no_weight_entered,Toast.LENGTH_LONG).show();
+                    }else{
+                        int poids = Integer.parseInt(editTextAddRepasTypeWeight.getText().toString());
+                        Item item = db.getItem(itemName);
+                        ItemRepas itemRepas = new ItemRepas(item,poids);
+                        repas.addElement(itemRepas);
+                        listViewRepasItem.setAdapter(adapter);
+                        editTextAddRepasItem.setText("");
+                        editTextAddRepasTypeWeight.setText("");
+                    }
+
 
                 }
             }
         });
     }
 
+    //menu handling
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_test, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return MenuHandler.HandleMenuEvents(item,getApplicationContext(),this);
+    }
 
 
     public void initializeAdapter() {
         adapter = new ItemRepasAdapter(AddNewRepasActivity.this,repas.getElements());
+
+    }
+
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
 
     }
 

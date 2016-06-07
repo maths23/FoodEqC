@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_create_item"
+        android:id="@+id/textView8"
+        android:textSize="30dp"
+        android:layout_gravity="center_horizontal" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="0dp"
+        android:layout_weight="0.3" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="20px"
+            android:layout_weight="0.05" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/known_equivalent"
+            android:id="@+id/textView9"
+            android:layout_weight="0.7"
+            android:textSize="20dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="20px"
+            android:layout_weight="0.1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_item"
+            android:id="@+id/buttonCreateItemTypeKnown" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="20px"
+            android:layout_weight="0.05" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown_equivalent"
+            android:id="@+id/textView10"
+            android:layout_weight="0.7"
+            android:textSize="20dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="20px"
+            android:layout_weight="0.1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_item"
+            android:id="@+id/buttonCreateItemTypeUnknown" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="0dp"
+        android:layout_weight="0.4" />
+
+</LinearLayout>
