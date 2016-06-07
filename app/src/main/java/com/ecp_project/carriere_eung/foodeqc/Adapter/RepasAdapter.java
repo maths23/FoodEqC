@@ -11,6 +11,7 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.ItemRepas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -48,9 +49,9 @@ public class RepasAdapter extends ArrayAdapter<Repas> {
         }
         Repas repas = getItem(position);
         //il ne reste plus qu'à remplir notre vue
-        viewHolder.textViewRepasType.setText(repas.getRepasType().toString() + String.valueOf(repas.getId()));
-        viewHolder.textViewRepasDate.setText(new StringBuilder().append("Le ").append(repas.getDate().get(GregorianCalendar.DAY_OF_MONTH)).append("/").append(repas.getDate().get(GregorianCalendar.MONTH) + 1).append("/").append(repas.getDate().get(GregorianCalendar.YEAR)).append(" à ").append(repas.getDate().get(GregorianCalendar.HOUR) + repas.getDate().get(GregorianCalendar.AM_PM)).append(":").append(repas.getDate().get(GregorianCalendar.MINUTE)));
-        viewHolder.textViewRepasCO2Equivalent.setText(String.valueOf(repas.getCo2Equivalent()));
+        viewHolder.textViewRepasType.setText(repas.getRepasType().toString() + String.valueOf(repas.getId()) + " " + String.valueOf(repas.getDate().getTimeInMillis()));
+        viewHolder.textViewRepasDate.setText(new StringBuilder().append("Le ").append(String.format("%02d",repas.getDate().get(Calendar.DAY_OF_MONTH))).append("/").append(String.format("%02d",repas.getDate().get(Calendar.MONTH)+1)).append("/").append(repas.getDate().get(GregorianCalendar.YEAR)).append(" à ").append(repas.getDate().get(GregorianCalendar.HOUR_OF_DAY)).append(":").append(repas.getDate().get(GregorianCalendar.MINUTE)));
+        viewHolder.textViewRepasCO2Equivalent.setText(String.format("%.2f",repas.getCo2Equivalent()));
 
         return convertView;
     }

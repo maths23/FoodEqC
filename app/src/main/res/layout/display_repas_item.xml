@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Item Name"
+        android:textColor="@color/black"
         android:id="@+id/textViewRepasItemName"
         android:paddingRight="35dp"
         android:layout_alignParentTop="true"
@@ -26,4 +27,16 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medium Text"
+        android:id="@+id/textViewDisplayItemRepasCO2Equivalent"
+        android:layout_below="@+id/textViewRepasItemWeight"
+        android:paddingRight="35dp"
+        android:layout_alignParentRight="true"/>
+
+
+
 </RelativeLayout>

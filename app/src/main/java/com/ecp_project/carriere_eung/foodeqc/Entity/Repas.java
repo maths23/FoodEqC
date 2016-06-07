@@ -53,18 +53,21 @@ public class Repas {
     }
 
     public void setElements(ArrayList<ItemRepas> elements) {
+
         this.elements = elements;
+        updateCO2Equivalent();
     }
 
     public void addElement(ItemRepas element) {
         this.elements.add(element);
         this.co2Equivalent += element.getCo2Equivalent();
+        updateCO2Equivalent();
     }
 
     public void removeElement(ItemRepas element) throws ItemNotFoundException {
         if (this.elements.contains(element)) {
             this.elements.remove(element);
-            this.co2Equivalent -= element.getCo2Equivalent();
+            updateCO2Equivalent();
         }
         else {
             throw new ItemNotFoundException();
@@ -85,5 +88,14 @@ public class Repas {
 
     public int getId() {
         return this.id;
+    }
+
+    public void updateCO2Equivalent() {
+        double returnValue = 0;
+        for (ItemRepas itemRepas: this.elements
+             ) {
+            returnValue += itemRepas.getCo2Equivalent();
+        }
+        this.co2Equivalent = returnValue;
     }
 }
