@@ -1061,6 +1061,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return list;
     }
+
+    public double getTodayCO2Equivalent() {
+        double returnValue = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery;
+        GregorianCalendar c = new GregorianCalendar();
+        c.clear(Calendar.HOUR_OF_DAY);
+        c.clear(Calendar.MINUTE);
+        c.clear(Calendar.SECOND);
+        c.clear(Calendar.MILLISECOND);
+
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        long indicator = c.getTimeInMillis() - 1;
+
+        selectQuery = "SELECT " + KEY_REPAS_CO2_EQUIVALENT + " FROM " + DATABASE_TABLE_REPAS + " WHERE "
+                + KEY_REPAS_DATE + " > '" + String.valueOf(indicator) + "'";
+        // looping through all rows and adding to list
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                returnValue += cursor.getDouble(0);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        db.close();
+
+        return returnValue;
+    }
     // ------------------------------- "item_repas" Table Methods --------------------------------- //
 
     /**

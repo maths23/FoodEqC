@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
+    <color name="progressBarRed">#FF1020</color>
+    <color name="progressBarGreen"> #55FF55</color>
+    <color name="progressBarOrange">#FF9900</color>
 </resources>

@@ -22,6 +22,7 @@ public class DisplayItemComplete extends AppCompatActivity {
     TextView textItemName;
     TextView textTypeValue;
     TextView textEquivalentValue;
+    TextView textViewIngredient;
     ListView lvIngredients;
     ListAdapter adapter;
     ArrayList<HashMap<String,String>> ingredientList = new ArrayList<HashMap<String,String>>();
@@ -35,6 +36,8 @@ public class DisplayItemComplete extends AppCompatActivity {
 
         textItemName = (TextView)findViewById(R.id.textViewItemName);
         textTypeValue = (TextView)findViewById(R.id.textViewTypeValue);
+        textViewIngredient = (TextView)findViewById(R.id.textViewIngredient);
+        textViewIngredient.setText("");
         textEquivalentValue = (TextView)findViewById(R.id.textViewEquivalentValue);
         lvIngredients = (ListView)findViewById(R.id.listViewIngredient);
 
@@ -45,13 +48,15 @@ public class DisplayItemComplete extends AppCompatActivity {
 
         textItemName.setText(item.getName());
         textTypeValue.setText(item.getType().toString());
-        textEquivalentValue.setText(String.valueOf(item.getCo2Equivalent()));
+        textEquivalentValue.setText(String.valueOf(item.getCo2Equivalent()) + " g EqC / 100g");
         if(item instanceof ComposedItem){
+            textViewIngredient.setText(getString(R.string.list_of_ingredient));
+
             for(Ingredient ing:((ComposedItem) item).getIngredients()){
                 HashMap<String, String> ingredient = new HashMap<String, String>();
                 ingredient.put(TAG_INGREDIENT, ing.getName());
                 ingredient.put(TAG_PROPORTION, String.valueOf(ing.getProportion()));
-                ingredient.put(TAG_EQUIVALENT,String.valueOf(ing.getProportion()*ing.getItem().getCo2Equivalent()/100));
+                ingredient.put(TAG_EQUIVALENT,String.valueOf(ing.getProportion()*ing.getItem().getCo2Equivalent()/100) + " g EqC");
                 ingredientList.add(ingredient);
             }
         }

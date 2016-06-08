@@ -18,6 +18,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemAdapter;
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.DisplayItemComplete;
@@ -37,10 +38,10 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
     ListAdapter adapter;
     Spinner spinner;
     ArrayAdapter<String> spinnerAdapter;
-    final String TAG_IIEM = "item";
-    final String TAG_EQUIVALENT = "equivalent";
-    final String TAG_ITEMTYPE = "itemtype";
-    final String TAG_ID = "id";
+    final static public String TAG_IIEM = "item";
+    final static public String TAG_EQUIVALENT = "equivalent";
+    final static public String TAG_ITEMTYPE = "itemtype";
+    final static public String TAG_ID = "id";
     ArrayList<HashMap<String,String>> itemList;
     ArrayList<String> types = new ArrayList<>();
 
@@ -56,9 +57,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
 
 
 
-        adapter = new SimpleAdapter(
-                DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT,TAG_ITEMTYPE},
-                new int[]{R.id.textViewDisplayItemName,R.id.textViewDisplayItemEquivalent,R.id.textViewDisplayItemType});
+        adapter = new ItemAdapter(DisplayExistingItemActivity.this,itemList);
         lvItem.setAdapter(adapter);
         lvItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -138,9 +137,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
             Log.e("DisplayActivity",""+types.get(position));
             itemList = harvestItems(ItemType.toItemType(types.get(position).toLowerCase()));
         }
-        adapter = new SimpleAdapter(
-                DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
-                new int[]{R.id.textViewDisplayItemName, R.id.textViewDisplayItemEquivalent});
+        adapter =  new ItemAdapter(DisplayExistingItemActivity.this,itemList);
         lvItem.setAdapter(adapter);
     }
 
@@ -160,7 +157,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
             itemMap.put(TAG_IIEM, item.getName());
             itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
             itemMap.put(TAG_ITEMTYPE,stringItemType(item.getType()));
-            Log.e("DisplayEI, harvest",""+item.getId());
+            Log.e("DisplayEI, harvest",""+item.getId()+ itemMap.get(TAG_ITEMTYPE));
             itemMap.put(TAG_ID,String.valueOf(item.getId()));
             itemList.add(itemMap);
         }
@@ -185,6 +182,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
                 break;
             case local:
                 returnValue = "L";
+                break;
         }
         return returnValue;
     }

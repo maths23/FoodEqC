@@ -162,5 +162,14 @@
     <string name="emission_per_day_average">Emission per day average : </string>
     <string name="welcome_to_foodeqc">Welcome to FoodEqC !</string>
     <string name="warning_cannot_modify_base_item">Warning ! You can\'t modify or delete a base item !</string>
+    <string name="today_emission">Today\'s emission :</string>
+
+    <string name="average_emission_per_day">6600</string>
+    <string name="show_all_items">Show all items</string>
+    <string name="manage_item">Manage items</string>
+    <string name="show_all_meals">Show all meals</string>
+    <string name="list_of_ingredient">List of ingredient :</string>
+    <string name="item_name_with_two_points">Name :</string>
+    <string name="proportion_with_two_points">Proportion :</string>
 
 </resources>

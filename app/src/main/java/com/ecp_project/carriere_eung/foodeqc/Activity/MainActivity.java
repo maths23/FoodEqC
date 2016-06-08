@@ -9,21 +9,33 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    Button createItem;
+    Button manageItem;
     Button createRepas;
-    Button showItems;
     Button showMeals;
     Button statistics;
     DatabaseHandler db;
+
+    TextView textViewTodayEmission;
+    ProgressBar progressBarTodayEmission;
+    int average_emission_per_day;
+    int maxProgressBarTodayEmission;
+    int today_emission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         publishItemsInDatabase();
 
-
-        createItem = (Button)findViewById(R.id.buttonCreateItemMain);
-        createItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),AddNewItemTypeActivity.class);
-                startActivity(intent);
-
-            }
-        });
         createRepas = (Button)findViewById(R.id.buttonCreateRepasMain);
         createRepas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,28 +54,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        showItems = (Button)findViewById(R.id.buttonSeeItems);
-        showItems.setOnClickListener(new View.OnClickListener() {
+        showMeals = (Button)findViewById(R.id.buttonShowMeals);
+        showMeals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplication(),DisplayExistingItemActivity.class);
+                Intent intent = new Intent(getApplicationContext(),ShowAllMealsActivity.class);
                 startActivity(intent);
             }
         });
 
-        showMeals = (Button)findViewById(R.id.buttonShowMeals);
-        showMeals.setOnClickListener(new View.OnClickListener() {
+        manageItem = (Button)findViewById(R.id.buttonManageItems);
+        manageItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ShowAllMealsActivity.class);
-                startActivity(intent);
-            }
-        });
-        showMeals = (Button)findViewById(R.id.buttonShowMeals);
-        showMeals.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ShowAllMealsActivity.class);
+                Intent intent = new Intent(getApplicationContext(),ManageItemActivity.class);
                 startActivity(intent);
             }
         });
@@ -93,6 +87,35 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
 
         }
+
+
+        progressBarTodayEmission = (ProgressBar)findViewById(R.id.progressBarTodayEmission);
+        average_emission_per_day = Integer.parseInt(getString(R.string.average_emission_per_day));
+        maxProgressBarTodayEmission = (average_emission_per_day*4)/3;
+        progressBarTodayEmission.setMax(maxProgressBarTodayEmission);
+
+        today_emission = (int)db.getTodayCO2Equivalent();
+
+        textViewTodayEmission = (TextView)findViewById(R.id.textViewTodayEmission);
+        textViewTodayEmission.setText(String.valueOf(today_emission) + " g EqC");
+
+
+        if (today_emission <= maxProgressBarTodayEmission*6/10) {
+            progressBarTodayEmission.setProgress(today_emission);
+            textViewTodayEmission.setTextColor(getResources().getColor(R.color.progressBarGreen));
+        }
+        else if (today_emission <= maxProgressBarTodayEmission*8/10) {
+            progressBarTodayEmission.setProgress(today_emission);
+            textViewTodayEmission.setTextColor(getResources().getColor(R.color.progressBarOrange));
+        }
+        else {
+            progressBarTodayEmission.setProgress(maxProgressBarTodayEmission);
+            textViewTodayEmission.setTextColor(getResources().getColor(R.color.progressBarRed));
+
+        }
+
+
+
     }
     //menu handling
     @Override
@@ -107,6 +130,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         return MenuHandler.HandleMenuEvents(item,getApplicationContext(),this);
+    }
+
+    private double getEmissionPerDayAverage() {
+        List<Repas> repasList = db.getAllRepas();
+        int number_of_day = 0;
+        double sumCO2Equivalent = 0;
+        GregorianCalendar latestDate = new GregorianCalendar();
+        latestDate.clear(Calendar.HOUR_OF_DAY);
+        latestDate.clear(Calendar.MINUTE);
+        latestDate.clear(Calendar.SECOND);
+        latestDate.clear(Calendar.MILLISECOND);
+
+        latestDate.set(Calendar.HOUR_OF_DAY, 0);
+        latestDate.set(Calendar.MINUTE,0);
+        latestDate.set(Calendar.SECOND,0);
+        latestDate.set(Calendar.MILLISECOND,0);
+
+        long time = latestDate.getTimeInMillis();
+
+        for (Repas repas:repasList
+                ) {
+            if (repas.getDate().getTimeInMillis() < time) {
+                time -= 1000*60*60*24;
+                number_of_day +=1;
+            }
+            sumCO2Equivalent += repas.getCo2Equivalent();
+        }
+        return sumCO2Equivalent/number_of_day;
     }
 
 
