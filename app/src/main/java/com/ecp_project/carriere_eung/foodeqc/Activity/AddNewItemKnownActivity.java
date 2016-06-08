@@ -64,7 +64,7 @@ public class AddNewItemKnownActivity extends AppCompatActivity {
                 } else if (itemEquivalentText.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(), R.string.no_equivalent_entered, Toast.LENGTH_LONG).show();
                 } else {
-                    Item toBeAdded = new Item(itemName,itemEquivalent, ItemType.base);
+                    Item toBeAdded = new Item(itemName,itemEquivalent, ItemType.created);
                     boolean succes = db.addItem(toBeAdded);
                     Log.e("Create ",""+succes);
                     if(succes) {

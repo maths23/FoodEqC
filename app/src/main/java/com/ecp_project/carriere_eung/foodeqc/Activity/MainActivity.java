@@ -14,8 +14,16 @@ import android.widget.Toast;
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
+import com.ecp_project.carriere_eung.foodeqc.Entity.ItemContainer;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.R;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
     Button createItem;
@@ -25,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     Button statistics;
     DatabaseHandler db;
 
+    Button FirebaseButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +42,56 @@ public class MainActivity extends AppCompatActivity {
 
         publishItemsInDatabase();
 
+        FirebaseButton = (Button)findViewById(R.id.buttonFirebase);
+        FirebaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase myDatabase = FirebaseDatabase.getInstance();
+                myDatabase.getReference("createdItems").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Item item = dataSnapshot.getValue(Item.class);
+                        Log.d("read firebase",item.toString(getBaseContext()));
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                /*myDatabase.getReference("createdItems").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ItemContainer container = dataSnapshot.getValue(ItemContainer.class);
+                        for (Item item:container.getItems()){
+                            Log.d("read firebase",item.toString(getBaseContext()));
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                */
+            }
+        });
 
         createItem = (Button)findViewById(R.id.buttonCreateItemMain);
         createItem.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        //putting data from ADEME in the database
+
+    //putting data from ADEME in the database
     //Equivalent are in gramme of C02 per 100g
     //DANGER : crash dès qu'on met un "'" dans le nom ^^
     public void publishItemsInDatabase() {

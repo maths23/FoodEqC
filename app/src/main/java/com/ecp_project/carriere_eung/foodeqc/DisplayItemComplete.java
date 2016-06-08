@@ -44,7 +44,7 @@ public class DisplayItemComplete extends AppCompatActivity {
         Item item = db.getItem(item_id);
 
         textItemName.setText(item.getName());
-        textTypeValue.setText(item.getType().toString());
+        textTypeValue.setText(item.getTypeVal().toString());
         textEquivalentValue.setText(String.valueOf(item.getCo2Equivalent()));
         if(item instanceof ComposedItem){
             for(Ingredient ing:((ComposedItem) item).getIngredients()){

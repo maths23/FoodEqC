@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.CustomChidEventListener;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
@@ -17,8 +19,14 @@ import com.ecp_project.carriere_eung.foodeqc.Entity.ProcessingCost;
 
 import com.ecp_project.carriere_eung.foodeqc.Entity.Repas;
 import com.ecp_project.carriere_eung.foodeqc.Entity.RepasType;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.security.InvalidParameterException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,7 +34,7 @@ import java.util.List;
 
 /**
  * Created by Matthieu on 25/05/2016.
- * Contains all methods to use the SQLite local database.
+ * Contains all methods to use the SQLite composed database.
  * Every item can be identified by its name : no duplicate allowed
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -39,6 +47,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_TABLE_REPAS = "repas";
     private static final String DATABASE_TABLE_ITEM_REPAS = "item_repas";
     private static final int DATABASE_VERSION = 1;
+
+    //Key for firebase datas
+    private static final String KEY_FIREBASE_ITEMS = "createdItems";
 
     //Rows name for item table
     public static final String KEY_ITEMS_ROWID = "_id";
@@ -75,6 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String TAG = "DBHandler";
     private Context context;
+    private List<Item> itemsFromFirebase;
 
 
     //SQL command to create item table
@@ -155,6 +167,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean addItem(Item item) {
 
+        DatabaseReference myDatabase = FirebaseDatabase.getInstance().getReference();
+
         boolean createSuccessful = false;
         boolean createRelationSuccessful = true;
 
@@ -163,12 +177,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(KEY_ITEMS_NAME, item.getName());
             values.put(KEY_ITEMS_CO2_EQUIVALENT, item.getCo2Equivalent());
-            values.put(KEY_ITEMS_TYPE, item.getType().toString());
+            values.put(KEY_ITEMS_TYPE, item.getTypeVal().toString());
 
 
             //create item-composedItem relationships in ingredient table
             //both conditions are supposed to be actually exactely the same
-            if (item.getType() != ItemType.base && item instanceof ComposedItem) {
+            if (item.getTypeVal() == ItemType.composed && item instanceof ComposedItem) {
                 ComposedItem citem = (ComposedItem) item;
                 values.put(KEY_ITEM_PROCESS_COST, citem.getCost().getMalusFactor());
                 String citemName = citem.getName();
@@ -192,6 +206,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             if (createSuccessful) {
                 Log.e(TAG, item.getName() + " created.");
+                if (item.getTypeVal() == ItemType.created){
+                    String key = myDatabase.child(KEY_FIREBASE_ITEMS).push().getKey();
+                    myDatabase.child(KEY_FIREBASE_ITEMS).child(key).setValue(item);
+                }
+
             }
         } else {
 
@@ -290,9 +309,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // return contact list
 
                 break;
-            case local:
+            case composed:
                 selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
-                        + KEY_ITEMS_TYPE + " = '" + ItemType.local.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.composed.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
                 // looping through all rows and adding to list
                 cursor = db.rawQuery(selectQuery,null);
                 if (cursor.moveToFirst()) {
@@ -318,6 +337,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // return contact list
 
                 break;
+            case created:
+                selectQuery = "SELECT * FROM " + DATABASE_TABLE_ITEM + " WHERE "
+                        + KEY_ITEMS_TYPE + " = '" + ItemType.created.toString() + "'" + " ORDER BY " + KEY_ITEMS_NAME;
+                // looping through all rows and adding to list
+                cursor = db.rawQuery(selectQuery,null);
+                if (cursor.moveToFirst()) {
+                    do {
+                        Item item = getItem(cursor.getInt(0));
+                        // Adding item to list
+                        list.add(item);
+                    } while (cursor.moveToNext());
+                }
+                // return contact list
+
+                break;
+
 
 
         }
@@ -344,7 +379,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ITEMS_NAME, item.getName());
         values.put(KEY_ITEMS_CO2_EQUIVALENT, item.getCo2Equivalent());
-        values.put(KEY_ITEMS_TYPE, item.getType().toString());
+        values.put(KEY_ITEMS_TYPE, item.getTypeVal().toString());
 
         if(item instanceof ComposedItem){
             ComposedItem citem = (ComposedItem) item;
@@ -353,7 +388,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             //updating ingredients relationship
 
-            //checking if any local item has been removed from the ingredients list
+            //checking if any composed item has been removed from the ingredients list
             List<Integer> newBaseItemIds = new ArrayList<>();
             for (Ingredient ingredient : citem.getIngredients()){
                 newBaseItemIds.add(ingredient.getItem().getId());
@@ -509,11 +544,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * All to get only base Item (to create composed items for instance)
      * or all items (to create a meal)
      * @param name
-     * @param baseOnly
+     * @param NoComposedItem
      * @return the list of items whose name matches the one prompted by the user (name parameter)
      * If baseOnly is true, only Base item will be returned
      */
-    public List<Item> queryItemFromName(String name,Boolean baseOnly) {
+    public List<Item> queryItemFromName(String name,Boolean NoComposedItem) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         List<Item> items = new ArrayList<Item>();
@@ -522,7 +557,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String sql = "";
         sql += "SELECT * FROM " + DATABASE_TABLE_ITEM;
         sql += " WHERE " + KEY_ITEMS_NAME + " LIKE '%" + name + "%'";
-        if (baseOnly){
+        if (NoComposedItem){
             sql += " AND " + KEY_ITEMS_TYPE + " = '" + ItemType.base.toString() +"'";
         }
         sql += " ORDER BY " + KEY_ITEMS_NAME + " DESC";
@@ -550,17 +585,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return items;
     }
 
+
+    public List<Item> queryItemFromNameFromFirebase(final String searchTerm, boolean NoComposedItem){
+        FirebaseDatabase myDatabase = FirebaseDatabase.getInstance();
+        itemsFromFirebase = new ArrayList<>();
+        Log.d("read firebase :" ,"items lenght is at beginning " + itemsFromFirebase.size());
+        CustomChidEventListener listenner = new CustomChidEventListener(searchTerm,itemsFromFirebase,context);
+        myDatabase.getReference("createdItems").addChildEventListener(listenner);
+        itemsFromFirebase = listenner.getItemsFromFirebase();
+        return itemsFromFirebase;
+    }
+
     /**
      * @param searchTerm
      * @return a list of items whose name matches searchTerm
      * used for the autocompletion feature
      */
-    public String[] getItemsFromDb(String searchTerm, Boolean baseOnly) {
+    public String[] getItemsFromDb(final String searchTerm, Boolean noComposedItem) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         // add items on the array dynamically
-        List<Item> items = this.queryItemFromName(searchTerm, baseOnly);
+        List<Item> itemsLocal = this.queryItemFromName(searchTerm, noComposedItem);
+
+
+        int rowCountLocal = itemsLocal.size();
+        List<Item> items = itemsLocal;
+
         int rowCount = items.size();
+
+        Log.d("itemListfromFirebase","local list has : " + rowCountLocal);
 
         String[] item = new String[rowCount];
         int x = 0;
@@ -779,7 +832,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(KEY_CITEMS_NAME,item.getName());
             values.put(KEY_CITEMS_CO2_EQUIVALENT,item.getCo2Equivalent());
-            values.put(KEY_CITEMS_TYPE,item.getType().toString());
+            values.put(KEY_CITEMS_TYPE,item.getTypeVal().toString());
 
             createSuccessful = db.insert(DATABASE_TABLE_CITEM, null, values) > 0;
             //db.close();
@@ -948,7 +1001,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         //updating ingredients relationship
 
-        //checking if any local item has been removed from the ingredients list
+        //checking if any composed item has been removed from the ingredients list
         List<Integer> baseItemRepasId = new ArrayList<>();
         List<ItemRepas> newItemRepasList = new ArrayList<>();
         for (ItemRepas itemRepas : repas.getElements()){

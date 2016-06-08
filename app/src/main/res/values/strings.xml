@@ -21,6 +21,7 @@
     <string name="title_create_item">Create a new item</string>
     <string name="known_equivalent">I know the CO2 equivalent of my item</string>
     <string name="unknown_equivalent">I do not know the equivalent</string>
+    <string name="choose_from_firebase">Choose an item from the community</string>
 
     //AddNewItemKnownActivity
     <string name="add_new_item_kown_equivalent">Item  CO2 equivalent (g of C02/100g) : </string>
@@ -74,18 +75,22 @@
     <string name="proportion">Proportion</string>
     <string name="ingredient_equivalent">Ingredient Equivalent</string>
 
+    //Item Type
     <string name="type">Type</string>
     <string name="all">All</string>
     <string name="base">Base</string>
-    <string name="local">Local</string>
+    <string name="composed">composed</string>
     <string name="imported">Imported</string>
+    <string name="created">Created</string>
+
     <string name="item_repas_already_on_db">Item already in the meal !</string>
 
     <string-array name="item_type">
         <item>@string/all</item>
         <item>@string/base</item>
-        <item>@string/local</item>
+        <item>@string/composed</item>
         <item>@string/imported</item>
+        <item>@string/created</item>
     </string-array>
 
     <string name="item_name">Item name</string>

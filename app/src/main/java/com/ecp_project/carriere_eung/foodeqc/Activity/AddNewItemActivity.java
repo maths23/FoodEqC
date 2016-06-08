@@ -1,10 +1,9 @@
 package com.ecp_project.carriere_eung.foodeqc.Activity;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -23,19 +22,21 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.AddNewItemAuxiliary;
+import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.CustomChidEventListener;
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.CustomAutoCompleteTextChangedListener;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ComposedItem;
 import com.ecp_project.carriere_eung.foodeqc.Entity.Ingredient;
+import com.ecp_project.carriere_eung.foodeqc.Entity.Item;
 import com.ecp_project.carriere_eung.foodeqc.Entity.ItemType;
 import com.ecp_project.carriere_eung.foodeqc.R;
-import com.ecp_project.carriere_eung.foodeqc.SetProportionDialog;
 import com.ecp_project.carriere_eung.foodeqc.Widget.CustomAutoCompleteView;
-import com.ecp_project.carriere_eung.foodeqc.Activity.AddNewRepasActivity;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Matthieu on 19/05/2016.
@@ -61,6 +62,8 @@ public class AddNewItemActivity extends AppCompatActivity  {
     ListAdapter adapter;
     final String TAG_INGREDIENT = "ingredient";
     final String TAG_PROPORTION = "proportion";
+    final String TAG_EQUIVALENT = "equivalent";
+    List<Item> itemFromFirebase;
 
     //just before creating the new item record, base item proportion will expressed as a %
     private int total_proportion;
@@ -143,6 +146,15 @@ public class AddNewItemActivity extends AppCompatActivity  {
             }
         });
 
+        addIngredient.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String searchItem = ingredientText.getText().toString();
+                new AsyncQueryForName().execute(searchItem);
+                return true;
+            }
+        });
+
 
 
         lvIngredients = (ListView) findViewById(R.id.listViewIngredients);
@@ -219,7 +231,7 @@ public class AddNewItemActivity extends AppCompatActivity  {
                     Toast.makeText(getApplicationContext(), R.string.no_proportion_entered, Toast.LENGTH_LONG).show();
                 }
                 else{
-                    ComposedItem toBeAdded = new ComposedItem(itemName,ItemType.local,ingredients);
+                    ComposedItem toBeAdded = new ComposedItem(itemName,ItemType.composed,ingredients);
                     boolean succes = db.addItem(toBeAdded);
                     if(succes) {
                         Toast.makeText(getApplication(),"New item created : " + toBeAdded.toString(getApplicationContext()), Toast.LENGTH_LONG).show();
@@ -281,5 +293,81 @@ public class AddNewItemActivity extends AppCompatActivity  {
         intent.putExtra("returnValue",returnValue);
         setResult(RESULT_OK, intent);
         super.finish();
+    }
+
+    private class AsyncQueryForName extends AsyncTask<String,String, Void>{
+
+        @Override
+        protected Void doInBackground(String... searchTerm) {
+
+            FirebaseDatabase myDatabase = FirebaseDatabase.getInstance();
+            itemFromFirebase = new ArrayList<>();
+            Log.d("read firebase :" ,"items lenght is at beginning " + itemFromFirebase.size());
+            CustomChidEventListener listenner = new CustomChidEventListener(searchTerm[0],itemFromFirebase,getApplicationContext());
+            myDatabase.getReference("createdItems").addChildEventListener(listenner);
+            itemFromFirebase = listenner.getItemsFromFirebase();
+            Log.d("doInbackGround", "itemFromFirebase has " +itemFromFirebase.size());
+            Log.d("doInbackGround", "finish");
+            while(!listenner.getFinish()){
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Log.d("onPostExecute","lauching onPostExecute");
+            AlertDialog.Builder builder = new AlertDialog.Builder(AddNewItemActivity.this);
+            final ListView lvDialog = new ListView(getApplicationContext());
+
+            final ArrayList<HashMap<String,String>> itemFromFirebaseMapList = new ArrayList<HashMap<String,String>>();
+            Log.d("onPostExecute","before for : " + itemFromFirebase.size());
+            for(Item item:itemFromFirebase){
+                HashMap<String, String> itemMap = new HashMap<String, String>();
+                itemMap.put(TAG_INGREDIENT,item.getName());
+                itemMap.put(TAG_EQUIVALENT,String.valueOf(item.getCo2Equivalent()));
+                itemFromFirebaseMapList.add(itemMap);
+
+            }
+
+            adapter = new SimpleAdapter(
+                    AddNewItemActivity.this, itemFromFirebaseMapList, R.layout.display_item, new String[]{TAG_INGREDIENT,TAG_EQUIVALENT},
+                    new int[]{R.id.textViewDisplayItemName,R.id.textViewDisplayItemEquivalent});
+            lvDialog.setAdapter(adapter);
+            builder.setView(lvDialog);
+            builder.setTitle(getString(R.string.choose_from_firebase));
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            Log.d("onPostExecute","finish onPostExecute");
+
+            lvDialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String ingredientName = itemFromFirebaseMapList.get(position).get(TAG_INGREDIENT);
+                    db.addItem(new Item(ingredientName,
+                            Double.parseDouble(itemFromFirebaseMapList.get(position).get(TAG_EQUIVALENT)),ItemType.imported));
+
+
+                    if (AddNewItemAuxiliary.listContainsMap(ingredientList,ingredientName)) {
+                        Toast.makeText(getApplication(), R.string.ingredient_alreay_on_the_list, Toast.LENGTH_LONG).show();
+                    }else{
+                        HashMap<String, String> ingredient = new HashMap<String, String>();
+                        ingredient.put(TAG_INGREDIENT, ingredientName);
+                        ingredient.put(TAG_PROPORTION, "0");
+                        ingredientList.add(ingredient);
+                        lvIngredients.setAdapter(adapter);
+                        ingredientText.setText("");
+                    }
+
+                    dialog.dismiss();
+
+                }
+            });
+
+        }
     }
 }

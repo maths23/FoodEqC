@@ -5,16 +5,17 @@ package com.ecp_project.carriere_eung.foodeqc.Entity;
  *
  * Enumère les différents types d'items
  * base : produits de base
- * local :  ?
+ * composed :  ?
  * imported : produits créés par les utilisateurs
  *
  */
 public enum ItemType {
-    base,local,imported;
+    base, composed,imported,created;
 
     private static final String KEY_BASE = "base";
-    private static final String KEY_LOCAL = "local";
+    private static final String KEY_COMPOSED = "composed";
     private static final String KEY_IMPORTED = "imported";
+    private static final String KEY_CREATED = "created";
 
     @Override
     public String toString() {
@@ -23,15 +24,20 @@ public enum ItemType {
             case base:
                 returnValue = KEY_BASE;
                 break;
-            case local:
-                returnValue = KEY_LOCAL;
+            case composed:
+                returnValue = KEY_COMPOSED;
                 break;
             case imported:
                 returnValue = KEY_IMPORTED;
                 break;
+            case created:
+                returnValue = KEY_CREATED;
+                break;
         }
         return returnValue;
     }
+
+
 
     public static ItemType toItemType(String typeString){
         ItemType type =null;
@@ -39,12 +45,14 @@ public enum ItemType {
             case KEY_BASE:
                 type=ItemType.base;
                 break;
-            case KEY_LOCAL:
-                type=local;
+            case KEY_COMPOSED:
+                type= composed;
                 break;
             case KEY_IMPORTED:
                 type=imported;
                 break;
+            case KEY_CREATED:
+                type=created;
         }
         return type;
     }
