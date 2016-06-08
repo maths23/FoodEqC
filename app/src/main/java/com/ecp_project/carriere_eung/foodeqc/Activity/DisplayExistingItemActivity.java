@@ -18,6 +18,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ecp_project.carriere_eung.foodeqc.Adapter.ItemAdapter;
 import com.ecp_project.carriere_eung.foodeqc.AuxiliaryMethods.MenuHandler;
 import com.ecp_project.carriere_eung.foodeqc.DatabaseHandler;
 import com.ecp_project.carriere_eung.foodeqc.DisplayItemComplete;
@@ -37,9 +38,10 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
     ListAdapter adapter;
     Spinner spinner;
     ArrayAdapter<String> spinnerAdapter;
-    final String TAG_IIEM = "item";
-    final String TAG_EQUIVALENT = "equivalent";
-    final String TAG_ID = "id";
+    final static public String TAG_IIEM = "item";
+    final static public String TAG_EQUIVALENT = "equivalent";
+    final static public String TAG_ITEMTYPE = "itemtype";
+    final static public String TAG_ID = "id";
     ArrayList<HashMap<String,String>> itemList;
     ArrayList<String> types = new ArrayList<>();
 
@@ -55,9 +57,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
 
 
 
-        adapter = new SimpleAdapter(
-                DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
-                new int[]{R.id.textViewDisplayItemName,R.id.textViewDisplayItemEquivalent});
+        adapter = new ItemAdapter(DisplayExistingItemActivity.this,itemList);
         lvItem.setAdapter(adapter);
         lvItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,30 +71,37 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         lvItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                String itemName = itemList.get(position).get(TAG_IIEM);
-                AlertDialog.Builder builder = new AlertDialog.Builder(DisplayExistingItemActivity.this);
-                builder.setTitle(itemName);
-                builder.setMessage(getString(R.string.alertDialogDeleteItemRepas)  );
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        db.deleteItem(Integer.parseInt(itemList.get(position).get(TAG_ID)));
-                        int position = spinner.getSelectedItemPosition();
-                        updateItemList(position);
-                        lvItem.setAdapter(adapter);
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                if (!(itemList.get(position).get(TAG_ITEMTYPE).equals(stringItemType(ItemType.base)))) {
 
-                return true;
+                    String itemName = itemList.get(position).get(TAG_IIEM);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DisplayExistingItemActivity.this);
+                    builder.setTitle(itemName);
+                    builder.setMessage(getString(R.string.alertDialogDeleteItemRepas));
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            db.deleteItem(Integer.parseInt(itemList.get(position).get(TAG_ID)));
+                            int position = spinner.getSelectedItemPosition();
+                            updateItemList(position);
+                            lvItem.setAdapter(adapter);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    return true;
+                }
+                else {
+                    Toast.makeText(DisplayExistingItemActivity.this,getString(R.string.warning_cannot_modify_base_item),Toast.LENGTH_LONG).show();
+                    return false;
+                }
             }
         });
 
@@ -130,9 +137,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
             Log.e("DisplayActivity",""+types.get(position));
             itemList = harvestItems(ItemType.toItemType(types.get(position).toLowerCase()));
         }
-        adapter = new SimpleAdapter(
-                DisplayExistingItemActivity.this, itemList, R.layout.display_item, new String[]{TAG_IIEM, TAG_EQUIVALENT},
-                new int[]{R.id.textViewDisplayItemName, R.id.textViewDisplayItemEquivalent});
+        adapter =  new ItemAdapter(DisplayExistingItemActivity.this,itemList);
         lvItem.setAdapter(adapter);
     }
 
@@ -146,16 +151,40 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
         HashMap<String,String> baseItemMap = new HashMap<>();
         baseItemMap.put(TAG_IIEM,getString(R.string.item_name));
         baseItemMap.put(TAG_EQUIVALENT,getString(R.string.CO2_equivalent));
+        baseItemMap.put(TAG_ITEMTYPE, getString(R.string.type));
         for(Item item:db.getAllItems()){
             HashMap<String, String> itemMap = new HashMap<String, String>();
             itemMap.put(TAG_IIEM, item.getName());
             itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
-            Log.e("DisplayEI, harvest",""+item.getId());
+            itemMap.put(TAG_ITEMTYPE,stringItemType(item.getType()));
+            Log.e("DisplayEI, harvest",""+item.getId()+ itemMap.get(TAG_ITEMTYPE));
             itemMap.put(TAG_ID,String.valueOf(item.getId()));
             itemList.add(itemMap);
         }
         db.close();
         return  itemList;
+    }
+
+    /**
+     *
+     *
+     * @param type
+     * @return string representing the item type for the adapter
+     */
+    private String stringItemType(ItemType type) {
+        String returnValue = "";
+        switch (type) {
+            case base:
+                returnValue = "B";
+                break;
+            case imported:
+                returnValue = "I";
+                break;
+            case local:
+                returnValue = "L";
+                break;
+        }
+        return returnValue;
     }
 
     /**

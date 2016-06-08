@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,10 +39,14 @@ public class StatisticsActivity extends AppCompatActivity{
 
     int temporaryNumberOfDaysShown;
     double average;
+    int average_emission_per_day;
+    int today_emission;
+    int maxProgressBarTodayEmission;
 
     GraphView graphLast7Days;
     Button buttonChangeGraphNumberOfDaysStats;
     TextView textViewStatisticEmissionPerDayAverage;
+    ProgressBar progressBarTodayEmission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,7 @@ public class StatisticsActivity extends AppCompatActivity{
         graphLast7Days = (GraphView)findViewById(R.id.graphLast7Days);
 
         db = new DatabaseHandler(getApplication());
+
         temporaryNumberOfDaysShown = 5;
         initialiseGraph();
 
@@ -88,41 +94,11 @@ public class StatisticsActivity extends AppCompatActivity{
         });
 
 
-        textViewStatisticEmissionPerDayAverage = (TextView)findViewById(R.id.textViewStatisticEmissionPerDayAverage);
-        average = getEmissionPerDayAverage();
-        textViewStatisticEmissionPerDayAverage.setText(String.valueOf(average));
-
 
 
     }
 
-    private double getEmissionPerDayAverage() {
-        List<Repas> repasList = db.getAllRepas();
-        int number_of_day = 0;
-        double sumCO2Equivalent = 0;
-        GregorianCalendar latestDate = new GregorianCalendar();
-        latestDate.clear(Calendar.HOUR_OF_DAY);
-        latestDate.clear(Calendar.MINUTE);
-        latestDate.clear(Calendar.SECOND);
-        latestDate.clear(Calendar.MILLISECOND);
 
-        latestDate.set(Calendar.HOUR_OF_DAY, 0);
-        latestDate.set(Calendar.MINUTE,0);
-        latestDate.set(Calendar.SECOND,0);
-        latestDate.set(Calendar.MILLISECOND,0);
-
-        long time = latestDate.getTimeInMillis();
-
-        for (Repas repas:repasList
-             ) {
-            if (repas.getDate().getTimeInMillis() < time) {
-                time -= 1000*60*60*24;
-                number_of_day +=1;
-            }
-            sumCO2Equivalent += repas.getCo2Equivalent();
-        }
-        return sumCO2Equivalent/number_of_day;
-    }
 
 
     private String labelGraphDateFormat(GregorianCalendar c) {

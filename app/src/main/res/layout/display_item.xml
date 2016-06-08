@@ -16,5 +16,12 @@
         android:text="New Text"
         android:id="@+id/textViewDisplayItemEquivalent"
         android:gravity="left"
-        android:layout_weight="0.5" />
+        android:layout_weight="0.45" />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="A"
+        android:id="@+id/textViewDisplayItemType"
+        android:gravity="right"
+        android:layout_weight="0.05"/>
 </LinearLayout>

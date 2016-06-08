@@ -6,9 +6,15 @@
         android:title="@string/menu_add_meal">
     </item>
     <item android:title="@string/menu_history"
-        android:id="@+id/menu_history"></item>
+        android:id="@+id/menu_history">
+    </item>
     <item android:title="@string/menu_show_item"
-        android:id="@+id/menu_show_item"></item>
+        android:id="@+id/menu_show_item">
+    </item>
     <item android:title="@string/menu_create_item"
-        android:id="@+id/menu_create_item"></item>
+        android:id="@+id/menu_create_item">
+    </item>
+    <item android:title="@string/statistics"
+        android:id="@+id/menu_statistics">
+    </item>
 </menu>

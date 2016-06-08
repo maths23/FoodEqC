@@ -12,6 +12,7 @@ import com.ecp_project.carriere_eung.foodeqc.Activity.AddNewRepasTypeActivity;
 import com.ecp_project.carriere_eung.foodeqc.Activity.DisplayExistingItemActivity;
 import com.ecp_project.carriere_eung.foodeqc.Activity.MainActivity;
 import com.ecp_project.carriere_eung.foodeqc.Activity.ShowAllMealsActivity;
+import com.ecp_project.carriere_eung.foodeqc.Activity.StatisticsActivity;
 import com.ecp_project.carriere_eung.foodeqc.R;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
@@ -52,7 +53,10 @@ public class MenuHandler  {
                 intent = new Intent(context,AddNewItemTypeActivity.class);
                 activity.startActivity(intent);
                 return true;
-
+            case R.id.menu_statistics:
+                intent = new Intent(context,StatisticsActivity.class);
+                activity.startActivity(intent);
+                return true;
             default:
                 return false;
 

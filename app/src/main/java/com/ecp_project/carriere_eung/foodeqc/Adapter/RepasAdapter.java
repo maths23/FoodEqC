@@ -49,7 +49,7 @@ public class RepasAdapter extends ArrayAdapter<Repas> {
         }
         Repas repas = getItem(position);
         //il ne reste plus qu'à remplir notre vue
-        viewHolder.textViewRepasType.setText(repas.getRepasType().toString() + String.valueOf(repas.getId()) + " " + String.valueOf(repas.getDate().getTimeInMillis()));
+        viewHolder.textViewRepasType.setText(repas.getRepasType().toString());
         viewHolder.textViewRepasDate.setText(new StringBuilder().append("Le ").append(String.format("%02d",repas.getDate().get(Calendar.DAY_OF_MONTH))).append("/").append(String.format("%02d",repas.getDate().get(Calendar.MONTH)+1)).append("/").append(repas.getDate().get(GregorianCalendar.YEAR)).append(" à ").append(repas.getDate().get(GregorianCalendar.HOUR_OF_DAY)).append(":").append(repas.getDate().get(GregorianCalendar.MINUTE)));
         viewHolder.textViewRepasCO2Equivalent.setText(String.format("%.2f",repas.getCo2Equivalent()));
 

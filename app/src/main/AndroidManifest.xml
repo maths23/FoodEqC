@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo_foodeqc"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -33,12 +33,17 @@
         <activity android:name=".Activity.ShowAllMealsActivity">
 
         </activity>
-        <activity android:name=".Activity.AddNewItemTypeActivity"></activity>
+        <activity android:name=".Activity.AddNewItemTypeActivity">
+
+        </activity>
         <activity android:name=".Activity.AddNewItemKnownActivity">
 
         </activity>
 
         <activity android:name=".Activity.StatisticsActivity">
+
+        </activity>
+        <activity android:name=".Activity.ManageItemActivity">
 
         </activity>
 
