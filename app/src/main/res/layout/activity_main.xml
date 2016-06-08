@@ -9,56 +9,62 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Activity.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView3" />
+
+
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CreateItem"
+        android:text="@string/create_item_main"
         android:id="@+id/buttonCreateItemMain"
-        android:layout_below="@+id/textView3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="57dp" />
+        android:layout_above="@+id/buttonSeeItems"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-        android:text="@string/create_item"
-        android:id="@+id/buttonCreateItemMain" />
+
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonCreateItemMain"
         android:text="@string/create_repas_main"
-        android:id="@+id/buttonCreateRepasMain" />
+        android:id="@+id/buttonCreateRepasMain"
+        android:layout_above="@+id/buttonShowMeals"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="See items"
         android:id="@+id/buttonSeeItems"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_toRightOf="@+id/buttonCreateItemMain"
-        android:layout_toEndOf="@+id/buttonCreateItemMain" />
+        android:layout_above="@+id/buttonStatistics"
+        android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show all meals"
         android:id="@+id/buttonShowMeals"
-        android:layout_below="@+id/buttonCreateItemMain"
-        android:layout_toRightOf="@+id/buttonCreateItemMain"
-        android:layout_toEndOf="@+id/buttonCreateItemMain" />
+        android:layout_above="@+id/buttonCreateItemMain"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/statistics"
         android:id="@+id/buttonStatistics"
-        android:layout_below="@+id/buttonShowMeals"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-         />
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/welcome_to_foodeqc"
+
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:id="@+id/textView3"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
