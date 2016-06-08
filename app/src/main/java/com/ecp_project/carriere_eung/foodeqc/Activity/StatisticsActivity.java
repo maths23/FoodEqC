@@ -39,9 +39,7 @@ public class StatisticsActivity extends AppCompatActivity{
 
     int temporaryNumberOfDaysShown;
     double average;
-    int average_emission_per_day;
-    int today_emission;
-    int maxProgressBarTodayEmission;
+
 
     GraphView graphLast7Days;
     Button buttonChangeGraphNumberOfDaysStats;
@@ -92,6 +90,11 @@ public class StatisticsActivity extends AppCompatActivity{
                 alertDialog.show();
             }
         });
+
+        textViewStatisticEmissionPerDayAverage = (TextView)findViewById(R.id.textViewStatisticEmissionPerDayAverage);
+        average = getEmissionPerDayAverage();
+        textViewStatisticEmissionPerDayAverage.setText(String.valueOf(average));
+        Log.e("Statistics",""+average);
 
 
 
@@ -192,5 +195,32 @@ public class StatisticsActivity extends AppCompatActivity{
 
 
         return new LineGraphSeries<>(points.toArray(new DataPoint[points.size()]));
+    }
+
+    public double getEmissionPerDayAverage() {
+        GregorianCalendar latestDate = new GregorianCalendar();
+        latestDate.clear(Calendar.HOUR_OF_DAY);
+        latestDate.clear(Calendar.MINUTE);
+        latestDate.clear(Calendar.SECOND);
+        latestDate.clear(Calendar.MILLISECOND);
+
+        latestDate.set(Calendar.HOUR_OF_DAY, 0);
+        latestDate.set(Calendar.MINUTE,0);
+        latestDate.set(Calendar.SECOND,0);
+        latestDate.set(Calendar.MILLISECOND,0);
+
+
+        long time = latestDate.getTimeInMillis();
+        double totalCO2Equivalent = 0;
+        int number_of_day =0;
+        for (Repas repas: db.getAllRepas()) {
+            if (repas.getDate().getTimeInMillis()<time) {
+                number_of_day+=1;
+                time -= 1000*60*60*24;
+            }
+            totalCO2Equivalent+=repas.getCo2Equivalent();
+        }
+
+        return totalCO2Equivalent/number_of_day;
     }
 }
