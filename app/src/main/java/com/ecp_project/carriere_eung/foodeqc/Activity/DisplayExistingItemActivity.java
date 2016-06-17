@@ -156,7 +156,7 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
             HashMap<String, String> itemMap = new HashMap<String, String>();
             itemMap.put(TAG_IIEM, item.getName());
             itemMap.put(TAG_EQUIVALENT, String.valueOf(item.getCo2Equivalent()));
-            itemMap.put(TAG_ITEMTYPE,stringItemType(item.getType()));
+            itemMap.put(TAG_ITEMTYPE,stringItemType(item.getTypeVal()));
             Log.e("DisplayEI, harvest",""+item.getId()+ itemMap.get(TAG_ITEMTYPE));
             itemMap.put(TAG_ID,String.valueOf(item.getId()));
             itemList.add(itemMap);
@@ -180,8 +180,8 @@ public class DisplayExistingItemActivity extends AppCompatActivity {
             case imported:
                 returnValue = "I";
                 break;
-            case local:
-                returnValue = "L";
+            case composed:
+                returnValue = "C";
                 break;
         }
         return returnValue;
